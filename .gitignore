@@ -11,3 +11,6 @@
 
 # IDEs
 .idea
+
+# Gem builds
+*.gem
