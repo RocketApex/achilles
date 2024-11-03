@@ -17,18 +17,19 @@ class Turbo {
     // Events registering
     // Turbolinks lifecycle ref: https://sevos.io/2017/02/27/turbolinks-lifecycle-explained.html
     // Render is not called on initial page load. So execute only once during page load
-    $(document).one("turbo:load", () => {
+    $(document).on("turbo:load", () => {
+      console.log('[achilles] turbo load event')
       this._setupCallback();
     });
 
-    // Render is called before each page transition. But its not called on initial page load. That's why we need 'load'
-    $(document).on("turbo:render", () => {
-      this._setupCallback();
-    });
-
-    $(document).on("turbo:before-render", () => {
-      this._teardownCallback();
-    });
+    // // Render is called before each page transition. But its not called on initial page load. That's why we need 'load'
+    // $(document).on("turbo:render", () => {
+    //   this._setupCallback();
+    // });
+    //
+    // $(document).on("turbo:before-render", () => {
+    //   this._teardownCallback();
+    // });
   }
 }
 

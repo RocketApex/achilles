@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    achilles (0.1.1)
+    achilles (0.1.2)
       rails (>= 7.0.2.3)
 
 GEM
