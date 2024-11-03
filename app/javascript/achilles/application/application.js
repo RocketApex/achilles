@@ -1,11 +1,11 @@
-import { AppConstants } from "common/src/achilles/application/app_constants";
-import { ComponentsRegistry } from "common/src/achilles/components/components_registry";
-import { ComponentParser } from "common/src/achilles/components/component_parser";
-import { ComponentsClassMapper } from "common/src/achilles/components/components_class_mapper";
-import { Page } from "common/src/achilles/page/page";
-import { Timezone } from "common/src/achilles/application/timezone/timezone";
-import { Turbo } from "common/src/achilles/application/hooks-manager/turbo";
-import { Observer } from "common/src/achilles/application/dom-mutation-observer/observer";
+import { AppConstants } from "achilles/application/app_constants";
+import { ComponentsRegistry } from "achilles/components/components_registry";
+import { ComponentParser } from "achilles/components/component_parser";
+import { ComponentsClassMapper } from "achilles/components/components_class_mapper";
+import { Page } from "achilles/page/page";
+import { Timezone } from "achilles/application/timezone/timezone";
+import { Turbo } from "achilles/application/hooks-manager/turbo";
+import { Observer } from "achilles/application/dom-mutation-observer/observer";
 
 // Application class/obj to drive all things for the web app
 class Application {

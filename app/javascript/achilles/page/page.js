@@ -1,4 +1,4 @@
-import { ComponentBase } from "common/src/achilles/components/component_base";
+import { ComponentBase } from "achilles/components/component_base";
 
 class Page extends ComponentBase {}
 

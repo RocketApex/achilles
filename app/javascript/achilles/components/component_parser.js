@@ -1,4 +1,4 @@
-import { AppConstants } from "common/src/achilles/application/app_constants";
+import { AppConstants } from "achilles/application/app_constants";
 
 // Parse the entire html dom and register components if not already registered
 class ComponentParser {

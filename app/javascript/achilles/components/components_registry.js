@@ -1,4 +1,4 @@
-import { AppConstants } from "common/src/achilles/application/app_constants";
+import { AppConstants } from "achilles/application/app_constants";
 
 // Contains all the registered components in a page at the current moment
 class ComponentsRegistry {
