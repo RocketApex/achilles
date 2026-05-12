@@ -3,6 +3,7 @@ import { AppConstants } from "achilles/application/app_constants";
 // Contains all the registered components in a page at the current moment
 class ComponentsRegistry {
     _registeredComponents = {};
+    strictLifecycleErrors = false;
 
     matchingElementsForId(id) {
         return [...document.querySelectorAll('[id]')].filter((elem) => elem.id === id);
@@ -81,7 +82,7 @@ class ComponentsRegistry {
                 component.obj.setup(...component.defaultParams);
                 component.obj.mounted = true;
             } catch(e) {
-                console.error(e);
+                this.handleLifecycleError(e);
             }
         }
 
@@ -107,8 +108,16 @@ class ComponentsRegistry {
                 component.obj.teardown(...component.defaultParams);
                 component.obj.mounted = false;
             } catch(e) {
-                console.error(e);
+                this.handleLifecycleError(e);
             }
+        }
+    }
+
+    handleLifecycleError(error) {
+        console.error(error);
+
+        if(this.strictLifecycleErrors) {
+            throw error;
         }
     }
 

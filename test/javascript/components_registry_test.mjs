@@ -138,3 +138,63 @@ test("ComponentsRegistry can remount a reused component after teardown", async (
   assert.equal(component.setupExecuted, true);
   assert.equal(component.teardownExecuted, false);
 });
+
+test("ComponentsRegistry logs lifecycle errors by default", async () => {
+  const element = new TestElement({ id: "counter" });
+  installDom([element]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  const error = new Error("setup failed");
+  const errors = [];
+
+  class CounterComponent extends ComponentBase {
+    setup() {
+      throw error;
+    }
+  }
+
+  const registry = new ComponentsRegistry();
+  registry.registerComponentByObj(new CounterComponent("counter", null));
+
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args);
+
+  try {
+    assert.doesNotThrow(() => registry.callSetupForComponent("counter"));
+  } finally {
+    console.error = originalError;
+  }
+
+  assert.equal(errors[0][0], error);
+});
+
+test("ComponentsRegistry re-raises lifecycle errors in strict mode", async () => {
+  const element = new TestElement({ id: "counter" });
+  installDom([element]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  const error = new Error("setup failed");
+
+  class CounterComponent extends ComponentBase {
+    setup() {
+      throw error;
+    }
+  }
+
+  const registry = new ComponentsRegistry();
+  registry.strictLifecycleErrors = true;
+  registry.registerComponentByObj(new CounterComponent("counter", null));
+
+  const originalError = console.error;
+  console.error = () => {};
+
+  try {
+    assert.throws(() => registry.callSetupForComponent("counter"), error);
+  } finally {
+    console.error = originalError;
+  }
+});

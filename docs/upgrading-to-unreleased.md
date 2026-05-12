@@ -117,6 +117,21 @@ Review parent components whose `teardown()` removes DOM nodes, shared event
 targets, third-party widgets, or state that child components also use during
 cleanup.
 
+## Strict Lifecycle Errors
+
+By default, Achilles logs `setup()` and `teardown()` errors and keeps the page
+running.
+
+Tests and development environments can opt into strict lifecycle errors:
+
+```js
+const achilles = new Application();
+achilles.strictLifecycleErrors = true;
+```
+
+When strict mode is enabled, `setup()` and `teardown()` errors are still logged
+and then re-raised.
+
 ## Manual Test Checklist
 
 After updating an application:

@@ -21,9 +21,6 @@ reference docs should wait until the structure settles.
 - Split JavaScript tests by parser, registry, application, Turbo hooks, and
   component base responsibility.
 - Added package/file-list regression coverage for the gemspec.
+- Added opt-in strict lifecycle error handling for tests and development.
 
 ## Remaining Priority Gaps
-
-1. Clarify lifecycle error handling.
-   Setup and teardown exceptions are logged and swallowed. That is friendly for
-   production pages, but tests and development may need an opt-in strict mode.

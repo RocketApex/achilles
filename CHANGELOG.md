@@ -7,6 +7,8 @@ All notable changes to Achilles will be documented in this file.
 ### Added
 
 - Added explicit `Application#start` and `Application#stop` lifecycle methods.
+- Added opt-in `Application#strictLifecycleErrors` handling for tests and
+  development.
 - Added browser system coverage for nested components inside Turbo form
   replacement and Turbo Drive navigation.
 

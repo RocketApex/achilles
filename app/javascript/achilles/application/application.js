@@ -54,9 +54,17 @@ class Application {
     return this._page;
   }
 
+  get strictLifecycleErrors() {
+    return this.componentRegistry.strictLifecycleErrors;
+  }
+
   // Setters
   set engine(engine) {
     this._engine = engine;
+  }
+
+  set strictLifecycleErrors(value) {
+    this.componentRegistry.strictLifecycleErrors = value;
   }
 
   start() {

@@ -134,3 +134,18 @@ test("Application start and stop manage Turbo hooks and mutation observer", asyn
   assert.equal(document.listeners.get("turbo:before-render")?.length || 0, 0);
   assert.equal(mutationObservers[0].observing, false);
 });
+
+test("Application exposes strict lifecycle error mode", async () => {
+  installDom();
+
+  const { Application } = await importAchilles("application/application.js");
+
+  const application = new Application();
+
+  assert.equal(application.strictLifecycleErrors, false);
+
+  application.strictLifecycleErrors = true;
+
+  assert.equal(application.strictLifecycleErrors, true);
+  assert.equal(application.componentRegistry.strictLifecycleErrors, true);
+});
