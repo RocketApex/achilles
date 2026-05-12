@@ -18,11 +18,11 @@ class ComponentBase {
     teardown() {}
 
     rootElement() {
-        return $(this.rootElementSelector());
+        return document.getElementById(this.id);
     }
 
     rootElementSelector() {
-        return `#${this.id}`;
+        return `#${CSS.escape(this.id)}`;
     }
 }
 

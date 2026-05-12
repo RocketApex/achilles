@@ -13,7 +13,7 @@ class Observer {
 
   start() {
     // Listen on html instead of body since turbo replaces body and the observer stops after one page transition
-    this._mutationObserver.observe($('html')[0], this.config());
+    this._mutationObserver.observe(document.documentElement, this.config());
   }
 
   stop() {

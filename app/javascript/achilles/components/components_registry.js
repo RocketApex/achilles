@@ -4,12 +4,20 @@ import { AppConstants } from "achilles/application/app_constants";
 class ComponentsRegistry {
     _registeredComponents = {};
 
+    matchingElementsForId(id) {
+        return [...document.querySelectorAll('[id]')].filter((elem) => elem.id === id);
+    }
+
+    elementForId(id) {
+        return document.getElementById(id);
+    }
+
     registerComponentByObj(obj) {
         this.registerComponent(obj.id, obj, obj.defaultParams, obj.parentComponentId);
     }
 
     registerComponent(id, obj, defaultParams, parentComponentId) {
-        if($(`[id=${id}]`).length > 1) {
+        if(this.matchingElementsForId(id).length > 1) {
             console.error(`Error while registering component: There are more than one elements with the same id: ${id}. Skipping registering component`);
             return;
         }
@@ -29,7 +37,7 @@ class ComponentsRegistry {
             let parentComponent = this.getRegisteredComponent(parentComponentId);
             parentComponent.subComponents.push(id);
         }
-        $(`#${id}`).attr('data-component-registered', 'true');
+        this.elementForId(id)?.setAttribute('data-component-registered', 'true');
     }
 
     deregisterComponent(id) {
@@ -44,7 +52,7 @@ class ComponentsRegistry {
         }
 
         this._registeredComponents[id] = null;
-        $(`#${id}`).removeAttr('data-component-registered');
+        this.elementForId(id)?.removeAttribute('data-component-registered');
     }
 
     getRegisteredComponent(id) {
@@ -55,7 +63,7 @@ class ComponentsRegistry {
         let component = this.getRegisteredComponent(id);
         if(!component || !component.obj)
             return;
-        if(id !== AppConstants.PageComponentId && $('#' + id).length === 0) {
+        if(id !== AppConstants.PageComponentId && this.elementForId(id) === null) {
             this.elementNotFound(id);
             return;
         }

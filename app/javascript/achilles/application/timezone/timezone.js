@@ -11,7 +11,7 @@ class Timezone {
   }
 
   getTimezoneFromHtml() {
-    this._timezoneString = $("div[data-app-timezone]").data("app-timezone") || "Etc/UTC";
+    this._timezoneString = document.querySelector("[data-app-timezone]")?.dataset.appTimezone || "Etc/UTC";
   }
 }
 

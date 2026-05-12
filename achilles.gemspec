@@ -23,5 +23,6 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency "rails", ">= 7.0.2.3"
+  spec.add_dependency "importmap-rails", ">= 2.0.0"
   spec.add_dependency "turbo-rails", ">= 2.0.11"
 end

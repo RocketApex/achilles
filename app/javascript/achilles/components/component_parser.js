@@ -8,25 +8,25 @@ class ComponentParser {
     }
 
     parse() {
-        [...$('*[data-component-class]')].forEach((elem) => {
-            let klassName = $(elem).data('component-class');
+        [...document.querySelectorAll('[data-component-class]')].forEach((elem) => {
+            let klassName = elem.dataset.componentClass;
             if(klassName.trim() === '') { return; }
 
             let klass = this._componentsClassMapper.getComponentClass(klassName);
             if(typeof klass === 'undefined' || klass === null) {
                 console.error(`Component class not found: ${klassName} | Element:`);
-                console.error($(elem));
+                console.error(elem);
                 return;
             }
-            if($(elem).data('component-registered') === true) {
+            if(elem.dataset.componentRegistered === 'true') {
                 return;
             }
             try {
-                let obj = new klass($(elem).attr('id'), AppConstants.PageComponentId)
+                let obj = new klass(elem.id, AppConstants.PageComponentId)
                 this._componentRegistry.registerComponentByObj(obj);
             } catch (e) {
-                console.error(`Error parsing component. className: ${klassName} | Element ID: ${$(elem).attr('id')}`);
-                console.error($(elem));
+                console.error(`Error parsing component. className: ${klassName} | Element ID: ${elem.id}`);
+                console.error(elem);
                 console.error(e);
             }
         })
