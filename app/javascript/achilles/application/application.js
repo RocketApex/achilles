@@ -30,6 +30,8 @@ class Application {
 
     // Hook into the window events
     this._hooksManager = new Turbo(this, this.setup.bind(this), this.teardown.bind(this));
+
+    queueMicrotask(() => this.setup());
   }
 
   // Getters

@@ -11,7 +11,8 @@ Use this checklist for `1.0.0.rc1` and future releases.
 
 ```bash
 bin/rails test
-for file in $(find app/javascript/achilles -name '*.js' -print); do node --input-type=module --check < "$file" || exit 1; done
+bin/rails test:system
+for file in $(find app/javascript/achilles test/dummy/app/javascript -name '*.js' -print); do node --input-type=module --check < "$file" || exit 1; done
 RAILS_ENV=test bin/rails app:assets:precompile
 ```
 

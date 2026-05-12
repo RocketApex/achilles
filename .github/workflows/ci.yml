@@ -28,9 +28,12 @@ jobs:
       - name: Run Rails tests
         run: bin/rails test
 
+      - name: Run system tests
+        run: bin/rails test:system
+
       - name: Check JavaScript modules
         run: |
-          for file in $(find app/javascript/achilles -name '*.js' -print); do
+          for file in $(find app/javascript/achilles test/dummy/app/javascript -name '*.js' -print); do
             node --input-type=module --check < "$file"
           done
 

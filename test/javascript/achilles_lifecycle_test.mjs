@@ -144,6 +144,34 @@ test("Application registers dynamically inserted components through the mutation
   assert.equal(element.dataset.componentRegistered, "true");
 });
 
+test("Application schedules initial setup after synchronous component registration", async () => {
+  const element = new TestElement({
+    id: "initial",
+    dataset: { componentClass: "InitialComponent" },
+  });
+  installDom([element]);
+
+  const { Application } = await importAchilles("application/application.js");
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+
+  let setupCount = 0;
+
+  class InitialComponent extends ComponentBase {
+    setup() {
+      setupCount += 1;
+    }
+  }
+
+  const application = new Application();
+  application.componentsClassMapper.addComponentClass("InitialComponent", InitialComponent);
+
+  await new Promise((resolve) => queueMicrotask(resolve));
+
+  assert.equal(setupCount, 1);
+  assert.ok(application.componentRegistry.getRegisteredComponent("initial"));
+  assert.equal(element.dataset.componentRegistered, "true");
+});
+
 test("Turbo hooks call setup on turbo:load and teardown on turbo:before-render", async () => {
   const document = installDom();
   const { Turbo } = await importAchilles("application/hooks-manager/turbo.js");

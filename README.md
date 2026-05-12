@@ -261,6 +261,12 @@ Run the test suite with:
 bin/rails test
 ```
 
+Run the browser system test with:
+
+```bash
+bin/rails test:system
+```
+
 Run the JavaScript syntax check with:
 
 ```bash
