@@ -157,19 +157,18 @@ test("Turbo hooks call setup on turbo:load and teardown on turbo:before-render",
   assert.deepEqual(calls, ["setup", "teardown"]);
 });
 
-test("ComponentBase keeps rootElement jquery compatibility and exposes rootNode", async () => {
+test("ComponentBase exposes DOM root through rootElement and rootNode", async () => {
   const element = new TestElement({ id: "counter:one" });
   installDom([element]);
 
-  const jqueryResult = { jquery: true };
   globalThis.window.$ = (selector) => {
-    assert.equal(selector, "#counter\\:one");
-    return jqueryResult;
+    throw new Error(`rootElement should not call jQuery for ${selector}`);
   };
 
   const { ComponentBase } = await importAchilles("components/component_base.js");
   const component = new ComponentBase("counter:one");
 
   assert.equal(component.rootNode(), element);
-  assert.equal(component.rootElement(), jqueryResult);
+  assert.equal(component.rootElement(), element);
+  assert.equal(component.rootElementSelector(), "#counter\\:one");
 });

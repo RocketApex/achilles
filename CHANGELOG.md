@@ -7,7 +7,7 @@ All notable changes to Achilles will be documented in this file.
 ### Added
 
 - Added `importmap-rails` as an explicit runtime dependency.
-- Added `rootNode()` as the canonical way to access a component's DOM element.
+- Added `rootNode()` as an alias for a component's DOM element.
 - Added Turbo teardown support through `turbo:before-render`.
 - Added JavaScript lifecycle behavior tests for parser, registry, Turbo hooks,
   dynamic DOM insertion, setup idempotence, teardown idempotence, missing
@@ -24,17 +24,13 @@ All notable changes to Achilles will be documented in this file.
 - Fixed dummy app asset manifest linkage for asset precompile.
 - Removed deprecated Rails statistics rake task loading.
 
-### Compatibility
+### Breaking Changes
 
-- `rootElement()` still preserves the original Achilles behavior in the
-  compatibility line: it returns a jQuery object when `window.$` is present and
-  falls back to a DOM element otherwise.
-
-### Planned Breaking Changes For v1
-
-- `rootNode()` will become the primary root element API.
-- `rootElement()` will stop returning a jQuery object, or it will be removed.
-- Achilles internals will remain independent from jQuery.
+- `rootElement()` now always returns the DOM element for the component id.
+- `rootElement()` no longer returns a jQuery object when `window.$` is present.
+- Applications that want jQuery should wrap the DOM element explicitly with
+  `$(this.rootElement())`.
+- Achilles internals are independent from jQuery.
 
 ## 0.1.3
 

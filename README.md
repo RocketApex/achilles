@@ -49,15 +49,15 @@ import { ComponentBase } from "achilles/components/component_base";
 
 class CounterComponent extends ComponentBase {
   setup() {
-    this.rootNode().addEventListener("click", this.increment);
+    this.rootElement().addEventListener("click", this.increment);
   }
 
   teardown() {
-    this.rootNode().removeEventListener("click", this.increment);
+    this.rootElement().removeEventListener("click", this.increment);
   }
 
   increment = () => {
-    this.rootNode().textContent = Number(this.rootNode().textContent) + 1;
+    this.rootElement().textContent = Number(this.rootElement().textContent) + 1;
   }
 }
 
@@ -78,8 +78,8 @@ DOM node.
 
 - `setup` runs after `turbo:load` and after new matching DOM nodes are inserted.
 - `teardown` runs before Turbo renders a new page.
-- `rootElement()` preserves the original Achilles behavior: it returns a jQuery object when `window.$` is available, and otherwise returns the DOM element.
-- `rootNode()` returns the DOM element for the component id.
+- `rootElement()` returns the DOM element for the component id.
+- `rootNode()` is an alias for `rootElement()`.
 - `rootElementSelector()` returns a CSS selector for the component id.
 
 ## Timezone

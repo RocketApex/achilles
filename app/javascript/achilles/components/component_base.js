@@ -18,10 +18,6 @@ class ComponentBase {
     teardown() {}
 
     rootElement() {
-        if(typeof window.$ === 'function') {
-            return window.$(this.rootElementSelector());
-        }
-
         return this.rootNode();
     }
 

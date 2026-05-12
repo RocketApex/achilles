@@ -19,16 +19,17 @@ The v1 API should be small and documented:
 - `ComponentBase`
 - `ComponentsClassMapper`
 - DOM discovery through `data-component-class`
-- component root lookup through `rootNode()`
+- component root lookup through `rootElement()`
+- `rootNode()` as an alias for `rootElement()`
 - CSS selector lookup through `rootElementSelector()`
 - lifecycle hooks: `setup()` and `teardown()`
 - Turbo integration through `turbo:load` and `turbo:before-render`
 
 ## Planned Breaking Changes
 
-- Make `rootNode()` the primary component root API.
-- Remove the jQuery return behavior from `rootElement()`, or remove
-  `rootElement()` entirely.
+- Make `rootElement()` return the component's DOM element.
+- Keep `rootNode()` as an alias for `rootElement()`.
+- Remove the jQuery return behavior from `rootElement()`.
 - Keep Achilles internals independent from jQuery.
 - Require every component root to have a unique `id`.
 - Treat setup and teardown as idempotent lifecycle operations managed by

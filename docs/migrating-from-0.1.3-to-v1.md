@@ -23,10 +23,10 @@ These changes should be safe for existing `0.1.3` applications:
 - Achilles calls `teardown()` before Turbo renders a new page.
 - Achilles internals no longer require jQuery.
 - `rootNode()` is available for new code.
-- `rootElement()` still returns a jQuery object when `window.$` exists.
+- `rootElement()` returns the component's DOM element in v1.
 
-Use the compatibility release to start moving component code from
-`rootElement()` to `rootNode()` without changing all applications at once.
+Use the compatibility release to review component code that expects
+`rootElement()` to return a jQuery object.
 
 ## v1 Breaking API Direction
 
@@ -35,15 +35,15 @@ In v1, component code should use DOM APIs:
 ```js
 class MenuComponent extends ComponentBase {
   setup() {
-    this.rootNode().addEventListener("click", this.toggle);
+    this.rootElement().addEventListener("click", this.toggle);
   }
 
   teardown() {
-    this.rootNode().removeEventListener("click", this.toggle);
+    this.rootElement().removeEventListener("click", this.toggle);
   }
 
   toggle = () => {
-    this.rootNode().classList.toggle("is-open");
+    this.rootElement().classList.toggle("is-open");
   }
 }
 ```
@@ -55,14 +55,14 @@ Avoid relying on `rootElement()` returning a jQuery object:
 this.rootElement().addClass("is-open");
 
 // v1 style
-this.rootNode().classList.add("is-open");
+this.rootElement().classList.add("is-open");
 ```
 
 If an application still wants to use jQuery inside its own component code, keep
-that dependency in the application and wrap `rootNode()` explicitly:
+that dependency in the application and wrap `rootElement()` explicitly:
 
 ```js
-$(this.rootNode()).addClass("is-open");
+$(this.rootElement()).addClass("is-open");
 ```
 
 ## Component Markup
@@ -104,7 +104,8 @@ rg "\\$\\(this\\.root"
 rg "data-component-class"
 ```
 
-Convert `rootElement()` usage to `rootNode()` where possible before testing v1.
+Convert jQuery-style `rootElement()` usage to DOM APIs or explicit jQuery
+wrapping before testing v1.
 
 ## When To Test v1.0.0.rc1
 

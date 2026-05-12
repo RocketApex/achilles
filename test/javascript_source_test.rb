@@ -7,8 +7,6 @@ class JavascriptSourceTest < ActiveSupport::TestCase
     end
 
     offenders = javascript.filter_map do |path, source|
-      next if path.end_with?("/components/component_base.js")
-
       path if source.match?(/\$\(|jQuery/)
     end
 
