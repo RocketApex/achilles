@@ -68,11 +68,11 @@ class ComponentsRegistry {
             return;
         }
 
-        // Call the objs default setup if its not executed already, if not skip to their children
-        if(component.obj.setup && component.obj.setupExecuted === false) {
+        // Call the objs default setup if it is not mounted already, then continue to children
+        if(component.obj.setup && component.obj.mounted === false) {
             try{
                 component.obj.setup(...component.defaultParams);
-                component.obj.setupExecuted = true;
+                component.obj.mounted = true;
             } catch(e) {
                 console.error(e);
             }
@@ -94,11 +94,11 @@ class ComponentsRegistry {
             this.callTeardownForComponent(subComponentId);
         });
 
-        // Call the objs default teardown if not already executed
-        if(component.obj.teardown && component.obj.teardownExecuted === false) {
+        // Call the objs default teardown if it is currently mounted
+        if(component.obj.teardown && component.obj.mounted === true) {
             try{
                 component.obj.teardown(...component.defaultParams);
-                component.obj.teardownExecuted = true;
+                component.obj.mounted = false;
             } catch(e) {
                 console.error(e);
             }

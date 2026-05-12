@@ -2,8 +2,7 @@ class ComponentBase {
     parentComponentId;
     id;
     defaultParams;
-    setupExecuted = false;
-    teardownExecuted = false;
+    mounted = false;
 
     constructor(id, parentComponentId = 'Page', defaultParams = []) {
         this.id = id;
@@ -16,6 +15,24 @@ class ComponentBase {
 
     setup() {}
     teardown() {}
+
+    get setupExecuted() {
+        return this.mounted;
+    }
+
+    set setupExecuted(value) {
+        this.mounted = value;
+    }
+
+    get teardownExecuted() {
+        return !this.mounted;
+    }
+
+    set teardownExecuted(value) {
+        if(value === true) {
+            this.mounted = false;
+        }
+    }
 
     rootElement() {
         return this.rootNode();

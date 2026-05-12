@@ -141,6 +141,7 @@ test("ComponentsRegistry tears down and deregisters components whose element dis
   registry.registerComponent("Page", { id: "Page" }, [], null);
   registry.registerComponentByObj(new CounterComponent("counter", "Page"));
 
+  registry.callSetupForComponent("counter");
   document.elements = [];
 
   const originalError = console.error;
@@ -151,6 +152,39 @@ test("ComponentsRegistry tears down and deregisters components whose element dis
   assert.equal(teardownCount, 1);
   assert.equal(registry.getRegisteredComponent("counter"), undefined);
   assert.equal(Object.hasOwn(registry._registeredComponents, "counter"), false);
+});
+
+test("ComponentsRegistry can remount a reused component after teardown", async () => {
+  const element = new TestElement({ id: "counter" });
+  installDom([element]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  const calls = [];
+
+  class CounterComponent extends ComponentBase {
+    setup() {
+      calls.push("setup");
+    }
+
+    teardown() {
+      calls.push("teardown");
+    }
+  }
+
+  const registry = new ComponentsRegistry();
+  const component = new CounterComponent("counter", null);
+  registry.registerComponentByObj(component);
+
+  registry.callSetupForComponent("counter");
+  registry.callTeardownForComponent("counter");
+  registry.callSetupForComponent("counter");
+
+  assert.deepEqual(calls, ["setup", "teardown", "setup"]);
+  assert.equal(component.mounted, true);
+  assert.equal(component.setupExecuted, true);
+  assert.equal(component.teardownExecuted, false);
 });
 
 test("Application registers dynamically inserted components through the mutation observer", async () => {
