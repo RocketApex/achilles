@@ -7,6 +7,8 @@ All notable changes to Achilles will be documented in this file.
 ### Added
 
 - Added explicit `Application#start` and `Application#stop` lifecycle methods.
+- Added browser system coverage for nested components inside Turbo form
+  replacement and Turbo Drive navigation.
 
 ### Changed
 
@@ -16,7 +18,10 @@ All notable changes to Achilles will be documented in this file.
 - Elements with `data-component-class` must now have a non-empty `id`; invalid
   component roots are skipped with a console error.
 - Component teardown now runs from child components to parent components.
+- Component parentage now follows DOM ancestry under the synthetic `Page` root.
 - Turbo lifecycle hooks are now attached by `start()` and removed by `stop()`.
+- Achilles now requires `turbo-rails` so Turbo importmap assets are available to
+  host applications.
 
 ## 1.0.0
 

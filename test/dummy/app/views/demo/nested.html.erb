@@ -1,0 +1,18 @@
+<main class="demo-page">
+  <section id="nested-panel" class="demo-panel" data-component-class="DemoPanelComponent">
+    <p class="demo-kicker">Achilles demo</p>
+    <h1>Nested components</h1>
+
+    <p>
+      <%= link_to "Back to counter", root_path, id: "back-to-counter" %>
+    </p>
+
+    <button id="nested-button" class="demo-counter" data-component-class="DemoNestedButtonComponent" type="button">
+      Nested count: <span data-nested-count>0</span>
+    </button>
+
+    <div class="demo-form-panel">
+      <%= render "nested_form" %>
+    </div>
+  </section>
+</main>

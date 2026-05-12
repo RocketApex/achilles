@@ -1,0 +1,15 @@
+<turbo-frame id="nested-form-frame">
+  <%= form_with url: nested_form_path, method: :post, id: "profile-form", data: { component_class: "DemoFormComponent", turbo_frame: "nested-form-frame" } do |form| %>
+    <div id="profile-field" data-component-class="DemoFormFieldComponent">
+      <%= form.label :label, "Label" %>
+      <%= form.text_field :label, value: local_assigns[:submitted_label], data: { label_input: true } %>
+      <p>Preview: <span data-label-preview>empty</span></p>
+    </div>
+
+    <% if local_assigns[:submitted_label].present? %>
+      <p id="form-result">Submitted: <%= local_assigns[:submitted_label] %></p>
+    <% end %>
+
+    <%= form.submit "Save nested form" %>
+  <% end %>
+</turbo-frame>
