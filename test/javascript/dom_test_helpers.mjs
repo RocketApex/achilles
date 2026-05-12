@@ -63,6 +63,14 @@ export class TestDocument {
     this.listeners.set(eventName, listeners);
   }
 
+  removeEventListener(eventName, callback) {
+    const listeners = this.listeners.get(eventName) || [];
+    this.listeners.set(
+      eventName,
+      listeners.filter((listener) => listener !== callback)
+    );
+  }
+
   dispatchEvent(event) {
     const listeners = this.listeners.get(event.type) || [];
     listeners.forEach((callback) => callback(event));

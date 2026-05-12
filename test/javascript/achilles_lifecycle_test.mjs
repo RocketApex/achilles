@@ -172,6 +172,69 @@ test("Application schedules initial setup after synchronous component registrati
   assert.equal(element.dataset.componentRegistered, "true");
 });
 
+test("Application waits for start before mounting components", async () => {
+  const element = new TestElement({
+    id: "manual",
+    dataset: { componentClass: "ManualComponent" },
+  });
+  installDom([element]);
+
+  const { Application } = await importAchilles("application/application.js");
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+
+  let setupCount = 0;
+
+  class ManualComponent extends ComponentBase {
+    setup() {
+      setupCount += 1;
+    }
+  }
+
+  const application = new Application();
+  application.componentsClassMapper.addComponentClass("ManualComponent", ManualComponent);
+
+  await new Promise((resolve) => queueMicrotask(resolve));
+
+  assert.equal(setupCount, 0);
+  assert.equal(application.componentRegistry.getRegisteredComponent("manual"), undefined);
+
+  application.start();
+
+  assert.equal(setupCount, 1);
+  assert.ok(application.componentRegistry.getRegisteredComponent("manual"));
+  assert.equal(element.dataset.componentRegistered, "true");
+});
+
+test("Application start and stop manage Turbo hooks and mutation observer", async () => {
+  const document = installDom();
+
+  const { Application } = await importAchilles("application/application.js");
+
+  const application = new Application();
+
+  assert.equal(document.listeners.get("turbo:load")?.length || 0, 0);
+  assert.equal(document.listeners.get("turbo:before-render")?.length || 0, 0);
+  assert.equal(mutationObservers.length, 1);
+  assert.equal(mutationObservers[0].observing, false);
+
+  application.start();
+
+  assert.equal(document.listeners.get("turbo:load")?.length, 1);
+  assert.equal(document.listeners.get("turbo:before-render")?.length, 1);
+  assert.equal(mutationObservers[0].observing, true);
+
+  application.start();
+
+  assert.equal(document.listeners.get("turbo:load")?.length, 1);
+  assert.equal(document.listeners.get("turbo:before-render")?.length, 1);
+
+  application.stop();
+
+  assert.equal(document.listeners.get("turbo:load")?.length || 0, 0);
+  assert.equal(document.listeners.get("turbo:before-render")?.length || 0, 0);
+  assert.equal(mutationObservers[0].observing, false);
+});
+
 test("Turbo hooks call setup on turbo:load and teardown on turbo:before-render", async () => {
   const document = installDom();
   const { Turbo } = await importAchilles("application/hooks-manager/turbo.js");
