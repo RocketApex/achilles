@@ -2,6 +2,18 @@
 
 All notable changes to Achilles will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Added explicit `Application#start` and `Application#stop` lifecycle methods.
+
+### Changed
+
+- `Application` no longer starts automatically from the constructor. Applications
+  should register component classes, then call `achilles.start()`.
+- Turbo lifecycle hooks are now attached by `start()` and removed by `stop()`.
+
 ## 1.0.0
 
 ### Added

@@ -76,6 +76,7 @@ import { CounterComponent } from "components/counter_component";
 
 const achilles = new Application();
 achilles.componentsClassMapper.addComponentClass("CounterComponent", CounterComponent);
+achilles.start();
 ```
 
 Create components by extending `ComponentBase`:
@@ -170,6 +171,7 @@ The top-level Achilles application object.
 import { Application } from "achilles/application/application";
 
 const achilles = new Application();
+achilles.start();
 ```
 
 Useful properties:
@@ -177,6 +179,9 @@ Useful properties:
 - `componentsClassMapper`: register component classes by name.
 - `componentRegistry`: inspect or manage registered component instances.
 - `timezone`: access the configured app timezone.
+
+Call `start()` after registering component classes. Call `stop()` when an
+application instance should remove its Turbo hooks and stop observing the DOM.
 
 ### `ComponentsClassMapper`
 

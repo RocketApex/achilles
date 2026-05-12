@@ -16,6 +16,7 @@ class Application {
   _componentsClassMapper;
   _hooksManager;
   _domMutationObserver;
+  _started = false;
 
   constructor() {
     // Set the application while creating the object
@@ -30,8 +31,6 @@ class Application {
 
     // Hook into the window events
     this._hooksManager = new Turbo(this, this.setup.bind(this), this.teardown.bind(this));
-
-    queueMicrotask(() => this.setup());
   }
 
   // Getters
@@ -60,7 +59,32 @@ class Application {
     this._engine = engine;
   }
 
+  start() {
+    if (this._started) {
+      return;
+    }
+
+    this._started = true;
+    this._hooksManager.start();
+    this.setup();
+  }
+
+  stop() {
+    if (!this._started) {
+      return;
+    }
+
+    this._started = false;
+    this._hooksManager.stop();
+    this.teardown();
+    this._domMutationObserver.stop();
+  }
+
   setup() {
+    if (!this._started) {
+      return;
+    }
+
     this._domMutationObserver.stop();
     this.parseHtmlAndRegisterComponents();
     this.componentRegistry.callSetupForComponent(AppConstants.PageComponentId);
@@ -73,7 +97,10 @@ class Application {
     this.componentRegistry.callTeardownForComponent(AppConstants.PageComponentId);
     // Remove/deregister all components from page except Page
     this.deregisterAllComponentsExceptPage();
-    this._domMutationObserver.start();
+
+    if (this._started) {
+      this._domMutationObserver.start();
+    }
   }
 
   parseHtmlAndRegisterComponents() {

@@ -126,7 +126,7 @@ test("Application registers dynamically inserted components through the mutation
   const application = new Application();
   application.componentsClassMapper.addComponentClass("DynamicComponent", DynamicComponent);
 
-  document.dispatchEvent({ type: "turbo:load" });
+  application.start();
   assert.equal(setupCount, 0);
   assert.equal(mutationObservers.length, 1);
   assert.equal(mutationObservers[0].observing, true);
@@ -144,7 +144,7 @@ test("Application registers dynamically inserted components through the mutation
   assert.equal(element.dataset.componentRegistered, "true");
 });
 
-test("Application schedules initial setup after synchronous component registration", async () => {
+test("Application start runs initial setup after synchronous component registration", async () => {
   const element = new TestElement({
     id: "initial",
     dataset: { componentClass: "InitialComponent" },
@@ -165,7 +165,7 @@ test("Application schedules initial setup after synchronous component registrati
   const application = new Application();
   application.componentsClassMapper.addComponentClass("InitialComponent", InitialComponent);
 
-  await new Promise((resolve) => queueMicrotask(resolve));
+  application.start();
 
   assert.equal(setupCount, 1);
   assert.ok(application.componentRegistry.getRegisteredComponent("initial"));
@@ -240,7 +240,8 @@ test("Turbo hooks call setup on turbo:load and teardown on turbo:before-render",
   const { Turbo } = await importAchilles("application/hooks-manager/turbo.js");
 
   const calls = [];
-  new Turbo({}, () => calls.push("setup"), () => calls.push("teardown"));
+  const turbo = new Turbo({}, () => calls.push("setup"), () => calls.push("teardown"));
+  turbo.start();
 
   document.dispatchEvent({ type: "turbo:load" });
   document.dispatchEvent({ type: "turbo:before-render" });
