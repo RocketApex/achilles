@@ -18,18 +18,12 @@ reference docs should wait until the structure settles.
   remounting a reused component instance.
 - Chose a DOM ancestry model for nested components under the single synthetic
   `Page` root.
+- Split JavaScript tests by parser, registry, application, Turbo hooks, and
+  component base responsibility.
+- Added package/file-list regression coverage for the gemspec.
 
 ## Remaining Priority Gaps
 
 1. Clarify lifecycle error handling.
    Setup and teardown exceptions are logged and swallowed. That is friendly for
    production pages, but tests and development may need an opt-in strict mode.
-
-2. Add package/file-list regression tests.
-   The gemspec file list is maintained manually. A small test should assert that
-   important docs and source files are included in packaged releases.
-
-3. Split JavaScript tests by responsibility.
-   `achilles_lifecycle_test.mjs` now covers parser, registry, application,
-   observer, Turbo, and component base behavior. Splitting it will make future
-   structure changes easier.
