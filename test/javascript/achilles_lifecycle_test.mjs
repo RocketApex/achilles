@@ -149,7 +149,8 @@ test("ComponentsRegistry tears down and deregisters components whose element dis
   console.error = originalError;
 
   assert.equal(teardownCount, 1);
-  assert.equal(registry.getRegisteredComponent("counter"), null);
+  assert.equal(registry.getRegisteredComponent("counter"), undefined);
+  assert.equal(Object.hasOwn(registry._registeredComponents, "counter"), false);
 });
 
 test("Application registers dynamically inserted components through the mutation observer", async () => {

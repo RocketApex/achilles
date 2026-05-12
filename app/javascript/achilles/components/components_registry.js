@@ -51,7 +51,7 @@ class ComponentsRegistry {
             parentComponent.subComponents = parentComponent.subComponents.filter(item => item !== id);
         }
 
-        this._registeredComponents[id] = null;
+        delete this._registeredComponents[id];
         this.elementForId(id)?.removeAttribute('data-component-registered');
     }
 
