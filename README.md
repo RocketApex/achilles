@@ -282,6 +282,10 @@ Run the dummy app asset precompile check with:
 RAILS_ENV=test bin/rails app:assets:precompile
 ```
 
+## Security
+
+Report security issues privately. See [SECURITY.md](SECURITY.md).
+
 ## License
 
 Achilles is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
