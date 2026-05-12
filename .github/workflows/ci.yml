@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4.9
+          bundler-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Rails tests
+        run: bin/rails test
+
+      - name: Check JavaScript modules
+        run: |
+          for file in $(find app/javascript/achilles -name '*.js' -print); do
+            node --input-type=module --check < "$file"
+          done
+
+      - name: Precompile dummy app assets
+        run: RAILS_ENV=test bin/rails app:assets:precompile
