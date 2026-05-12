@@ -3,38 +3,41 @@
 This is the current improvement backlog for Achilles core JavaScript. API
 reference docs should wait until the structure settles.
 
-## Priority Gaps
+## Completed
 
-1. Add an explicit application lifecycle.
-   `Application` currently starts from the constructor. A public
-   `start()`, `stop()`, and eventual destroy/cleanup path would make component
-   registration order, tests, multiple instances, and future adapters safer.
+- Added an explicit `Application#start` and `Application#stop` lifecycle.
+- Made Turbo event listeners removable.
+- Validated that component roots have non-empty ids before registration.
+- Changed teardown order so child components tear down before parent components.
+- Deleted deregistered registry entries instead of leaving `null` tombstones.
+- Batched mutation observer setup work with a microtask debounce.
+- Replaced one-way lifecycle flags with a `mounted` state while keeping
+  `setupExecuted` and `teardownExecuted` as compatibility aliases.
+- Added tests for missing ids, duplicate starts, listener cleanup,
+  child-before-parent teardown, dynamic insertion batching, deregistration, and
+  remounting a reused component instance.
 
-2. Make Turbo event listeners removable.
-   The Turbo hook manager registers anonymous listeners, so a second
-   `Application` instance can leave duplicate listeners behind.
+## Remaining Priority Gaps
 
-3. Validate component element ids.
-   Components are registry-backed by `id`, so elements with
-   `data-component-class` should have a non-empty stable id and fail clearly
-   when they do not.
+1. Improve parent registration safety.
+   `registerComponent` assumes a parent component exists when
+   `parentComponentId` is present. Invalid or future nested component registration
+   paths should fail clearly instead of raising a generic error.
 
-4. Teardown child components before parent components.
-   Parent teardown currently runs before child teardown. Child-first teardown is
-   safer when children need DOM or shared resources during cleanup.
+2. Decide the nested component model.
+   The parser currently attaches every parsed component directly to `Page`.
+   If Achilles should support component trees from nested DOM, parent discovery
+   needs an explicit rule and tests.
 
-5. Delete deregistered registry entries instead of leaving null tombstones.
-   Dynamic pages can accumulate unused keys if entries are set to `null`.
+3. Clarify lifecycle error handling.
+   Setup and teardown exceptions are logged and swallowed. That is friendly for
+   production pages, but tests and development may need an opt-in strict mode.
 
-6. Batch mutation observer setup work.
-   Each mutation currently reparses the full document. A microtask debounce
-   would preserve behavior while reducing repeated work.
+4. Add package/file-list regression tests.
+   The gemspec file list is maintained manually. A small test should assert that
+   important docs and source files are included in packaged releases.
 
-7. Replace one-way lifecycle flags with mounted/unmounted state.
-   `setupExecuted` and `teardownExecuted` never reset. Reused component
-   instances would not mount again after teardown.
-
-8. Expand tests around lifecycle edge cases.
-   Missing ids, duplicate application instances, listener cleanup,
-   child-before-parent teardown, dynamic add/remove loops, and mutation batching
-   should be covered before large internal restructuring.
+5. Split JavaScript tests by responsibility.
+   `achilles_lifecycle_test.mjs` now covers parser, registry, application,
+   observer, Turbo, and component base behavior. Splitting it will make future
+   structure changes easier.
