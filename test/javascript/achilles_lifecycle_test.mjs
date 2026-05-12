@@ -182,6 +182,11 @@ test("Application registers dynamically inserted components through the mutation
   document.elements.push(element);
 
   mutationObservers[0].trigger([{ type: "childList" }]);
+  mutationObservers[0].trigger([{ type: "childList" }]);
+
+  assert.equal(setupCount, 0);
+
+  await new Promise((resolve) => queueMicrotask(resolve));
 
   assert.equal(setupCount, 1);
   assert.ok(application.componentRegistry.getRegisteredComponent("dynamic"));

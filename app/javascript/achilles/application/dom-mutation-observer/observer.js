@@ -1,6 +1,7 @@
 class Observer {
   _mutationObserver;
   _callback;
+  _callbackScheduled = false;
 
   constructor(callback) {
     this._callback = callback;
@@ -18,10 +19,19 @@ class Observer {
 
   stop() {
     this._mutationObserver.disconnect();
+    this._callbackScheduled = false;
   }
 
   domChangedCallback(mutationsList, observer) {
-    this._callback();
+    if (this._callbackScheduled) {
+      return;
+    }
+
+    this._callbackScheduled = true;
+    queueMicrotask(() => {
+      this._callbackScheduled = false;
+      this._callback();
+    });
   }
 }
 
