@@ -110,6 +110,9 @@ Changes to these APIs need tests, documentation, and changelog notes.
 Use [docs/release-checklist.md](docs/release-checklist.md) for prereleases and
 final releases.
 
+Maintainer release ownership and project decision guidelines are documented in
+[MAINTAINERS.md](MAINTAINERS.md).
+
 Before releasing:
 
 - confirm CI is green

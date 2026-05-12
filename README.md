@@ -256,7 +256,9 @@ Applications upgrading from `0.1.3` should read the
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, test commands, pull request
-guidelines, and release notes.
+guidelines, and release notes. Project participation is covered by the
+[code of conduct](CODE_OF_CONDUCT.md). Maintainer responsibilities are described
+in [MAINTAINERS.md](MAINTAINERS.md).
 
 Run the test suite with:
 
