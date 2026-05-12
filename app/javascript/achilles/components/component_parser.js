@@ -26,7 +26,7 @@ class ComponentParser {
                 return;
             }
             try {
-                let obj = new klass(elem.id, AppConstants.PageComponentId)
+                let obj = new klass(elem.id, this.parentComponentIdFor(elem))
                 this._componentRegistry.registerComponentByObj(obj);
             } catch (e) {
                 console.error(`Error parsing component. className: ${klassName} | Element ID: ${elem.id}`);
@@ -38,6 +38,18 @@ class ComponentParser {
 
     hasValidId(elem) {
         return typeof elem.id === 'string' && elem.id.trim() !== '';
+    }
+
+    parentComponentIdFor(elem) {
+        let parent = elem.parentElement;
+        while(parent) {
+            if(parent.dataset?.componentClass && this.hasValidId(parent)) {
+                return parent.id;
+            }
+            parent = parent.parentElement;
+        }
+
+        return AppConstants.PageComponentId;
     }
 }
 

@@ -80,6 +80,31 @@ Search for component roots without ids:
 rg "data-component-class"
 ```
 
+## Nested Components
+
+Achilles now builds the component tree from DOM ancestry.
+
+- `Page` remains the single synthetic root component.
+- A component's parent is its nearest ancestor element with
+  `data-component-class`.
+- If no component ancestor exists, the parent is `Page`.
+
+For example:
+
+```erb
+<div id="dashboard" data-component-class="DashboardComponent">
+  <div id="filters" data-component-class="FiltersComponent"></div>
+</div>
+```
+
+The component tree is:
+
+```text
+Page
+dashboard
+filters
+```
+
 ## Teardown Order
 
 Component teardown now runs from children to parents.

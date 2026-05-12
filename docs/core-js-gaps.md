@@ -16,28 +16,20 @@ reference docs should wait until the structure settles.
 - Added tests for missing ids, duplicate starts, listener cleanup,
   child-before-parent teardown, dynamic insertion batching, deregistration, and
   remounting a reused component instance.
+- Chose a DOM ancestry model for nested components under the single synthetic
+  `Page` root.
 
 ## Remaining Priority Gaps
 
-1. Improve parent registration safety.
-   `registerComponent` assumes a parent component exists when
-   `parentComponentId` is present. Invalid or future nested component registration
-   paths should fail clearly instead of raising a generic error.
-
-2. Decide the nested component model.
-   The parser currently attaches every parsed component directly to `Page`.
-   If Achilles should support component trees from nested DOM, parent discovery
-   needs an explicit rule and tests.
-
-3. Clarify lifecycle error handling.
+1. Clarify lifecycle error handling.
    Setup and teardown exceptions are logged and swallowed. That is friendly for
    production pages, but tests and development may need an opt-in strict mode.
 
-4. Add package/file-list regression tests.
+2. Add package/file-list regression tests.
    The gemspec file list is maintained manually. A small test should assert that
    important docs and source files are included in packaged releases.
 
-5. Split JavaScript tests by responsibility.
+3. Split JavaScript tests by responsibility.
    `achilles_lifecycle_test.mjs` now covers parser, registry, application,
    observer, Turbo, and component base behavior. Splitting it will make future
    structure changes easier.

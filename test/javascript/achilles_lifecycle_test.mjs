@@ -76,6 +76,41 @@ test("ComponentParser skips component roots without ids", async () => {
   assert.equal(errors[0][1], element);
 });
 
+test("ComponentParser assigns nearest component ancestor as parent", async () => {
+  const dashboard = new TestElement({
+    id: "dashboard",
+    dataset: { componentClass: "DashboardComponent" },
+  });
+  const filters = new TestElement({
+    id: "filters",
+    dataset: { componentClass: "FiltersComponent" },
+    parentElement: dashboard,
+  });
+  installDom([dashboard, filters]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsClassMapper } = await importAchilles("components/components_class_mapper.js");
+  const { ComponentParser } = await importAchilles("components/component_parser.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  class DashboardComponent extends ComponentBase {}
+  class FiltersComponent extends ComponentBase {}
+
+  const registry = new ComponentsRegistry();
+  registry.registerComponent("Page", { id: "Page" }, [], null);
+
+  const mapper = new ComponentsClassMapper();
+  mapper.addComponentClass("DashboardComponent", DashboardComponent);
+  mapper.addComponentClass("FiltersComponent", FiltersComponent);
+
+  new ComponentParser(registry, mapper).parse();
+
+  assert.equal(registry.getRegisteredComponent("dashboard").parentComponentId, "Page");
+  assert.equal(registry.getRegisteredComponent("filters").parentComponentId, "dashboard");
+  assert.deepEqual(registry.getRegisteredComponent("Page").subComponents, ["dashboard"]);
+  assert.deepEqual(registry.getRegisteredComponent("dashboard").subComponents, ["filters"]);
+});
+
 test("ComponentsRegistry runs setup and teardown once for a component tree", async () => {
   const element = new TestElement({ id: "counter" });
   installDom([element]);

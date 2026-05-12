@@ -1,8 +1,9 @@
 export class TestElement {
-  constructor({ id, dataset = {} } = {}) {
+  constructor({ id, dataset = {}, parentElement = null } = {}) {
     this.id = id || "";
     this.dataset = { ...dataset };
     this.attributes = {};
+    this.parentElement = parentElement;
 
     if (this.id) {
       this.attributes.id = this.id;
@@ -23,6 +24,11 @@ export class TestElement {
     if (name === "data-component-registered") {
       delete this.dataset.componentRegistered;
     }
+  }
+
+  appendChild(child) {
+    child.parentElement = this;
+    return child;
   }
 }
 
