@@ -58,6 +58,9 @@ Do not publish `1.0.0` until these are true:
 3. Test `v1.0.0.rc1` in existing applications.
 4. Publish `1.0.0` only after the migration guide and real-app testing are done.
 
+Follow the [release checklist](release-checklist.md) when building and testing
+release candidates.
+
 ## Current Recommendation
 
 Do not push `v1.0.0` yet. The project is ready for a compatibility release, but
