@@ -2,7 +2,7 @@
 
 All notable changes to Achilles will be documented in this file.
 
-## 1.0.0.rc1
+## 1.0.0
 
 ### Added
 
