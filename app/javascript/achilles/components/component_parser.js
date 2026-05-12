@@ -11,6 +11,10 @@ class ComponentParser {
         [...document.querySelectorAll('[data-component-class]')].forEach((elem) => {
             let klassName = elem.dataset.componentClass;
             if(klassName.trim() === '') { return; }
+            if(!this.hasValidId(elem)) {
+                console.error(`Component root element is missing an id. className: ${klassName} | Element:`, elem);
+                return;
+            }
 
             let klass = this._componentsClassMapper.getComponentClass(klassName);
             if(typeof klass === 'undefined' || klass === null) {
@@ -30,6 +34,10 @@ class ComponentParser {
                 console.error(e);
             }
         })
+    }
+
+    hasValidId(elem) {
+        return typeof elem.id === 'string' && elem.id.trim() !== '';
     }
 }
 

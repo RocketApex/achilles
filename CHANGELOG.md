@@ -13,6 +13,8 @@ All notable changes to Achilles will be documented in this file.
 - `Application` no longer starts automatically from the constructor. Applications
   should register component classes, then call `achilles.start()`. See
   [docs/upgrading-to-unreleased.md](docs/upgrading-to-unreleased.md).
+- Elements with `data-component-class` must now have a non-empty `id`; invalid
+  component roots are skipped with a console error.
 - Turbo lifecycle hooks are now attached by `start()` and removed by `stop()`.
 
 ## 1.0.0

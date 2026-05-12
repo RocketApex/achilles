@@ -55,6 +55,31 @@ rg "new Application"
 For every application instance, confirm component classes are registered before
 calling `start()`.
 
+## Component Root Ids
+
+Every element with `data-component-class` must have a non-empty `id`.
+
+Before:
+
+```erb
+<div data-component-class="MenuComponent"></div>
+```
+
+After:
+
+```erb
+<div id="menu" data-component-class="MenuComponent"></div>
+```
+
+Achilles uses component root ids as registry keys. Components without ids are
+skipped and reported in the browser console.
+
+Search for component roots without ids:
+
+```bash
+rg "data-component-class"
+```
+
 ## Manual Test Checklist
 
 After updating an application:
