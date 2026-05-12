@@ -18,11 +18,23 @@ class ComponentBase {
     teardown() {}
 
     rootElement() {
+        if(typeof window.$ === 'function') {
+            return window.$(this.rootElementSelector());
+        }
+
+        return this.rootNode();
+    }
+
+    rootNode() {
         return document.getElementById(this.id);
     }
 
     rootElementSelector() {
-        return `#${CSS.escape(this.id)}`;
+        if(window.CSS && typeof window.CSS.escape === 'function') {
+            return `#${window.CSS.escape(this.id)}`;
+        }
+
+        return `#${this.id}`;
     }
 }
 

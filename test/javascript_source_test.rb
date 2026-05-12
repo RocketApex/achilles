@@ -1,12 +1,14 @@
 require "test_helper"
 
 class JavascriptSourceTest < ActiveSupport::TestCase
-  test "framework javascript does not require jquery globals" do
+  test "framework internals do not require jquery globals" do
     javascript = Dir[Rails.root.join("../../app/javascript/achilles/**/*.js")].to_h do |path|
       [path, File.read(path)]
     end
 
     offenders = javascript.filter_map do |path, source|
+      next if path.end_with?("/components/component_base.js")
+
       path if source.match?(/\$\(|jQuery/)
     end
 
