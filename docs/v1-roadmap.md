@@ -59,6 +59,6 @@ Do not publish `1.0.0` until these are true:
 
 ## Current Recommendation
 
-Do not push `v1.0.0` yet. The project is ready for a compatibility release once
-the current fixes are reviewed, but `1.0.0` should wait for the v1 API cleanup,
-migration guide, and CI.
+Do not push `v1.0.0` yet. The project is ready for a compatibility release, but
+`1.0.0` should wait for the final v1 API cleanup and real-application testing
+through a release candidate.

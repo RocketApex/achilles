@@ -101,6 +101,11 @@ Run the test suite with:
 bin/rails test
 ```
 
+## Migration
+
+Applications upgrading from `0.1.3` should read the
+[v1 migration guide](docs/migrating-from-0.1.3-to-v1.md).
+
 ## License
 
 Achilles is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
