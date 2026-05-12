@@ -255,6 +255,9 @@ Applications upgrading from `0.1.3` should read the
 
 ## Contributing
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, test commands, pull request
+guidelines, and release notes.
+
 Run the test suite with:
 
 ```bash
