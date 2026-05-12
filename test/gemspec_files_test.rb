@@ -18,7 +18,7 @@ class GemspecFilesTest < ActiveSupport::TestCase
       "app/javascript/achilles/components/components_registry.js",
       "config/importmap.rb",
       "docs/upgrading.md",
-      "docs/upgrading-to-unreleased.md"
+      "docs/upgrading-to-1.1.0.md"
     ]
 
     expected_files.each do |file|

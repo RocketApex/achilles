@@ -1,7 +1,6 @@
-# Upgrading To Unreleased
+# Upgrading To 1.1.0
 
-This guide covers changes currently on `main` that are not part of the latest
-published gem.
+This guide covers application-facing changes in Achilles `1.1.0`.
 
 ## Application Startup
 

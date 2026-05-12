@@ -7,7 +7,7 @@ setup, component markup, lifecycle behavior, or public APIs.
 
 ## Current Upgrade Notes
 
-- [Unreleased changes](upgrading-to-unreleased.md)
+- [Upgrading to 1.1.0](upgrading-to-1.1.0.md)
 - [Migrating from 0.1.3 to v1](migrating-from-0.1.3-to-v1.md)
 
 ## Upgrade Policy

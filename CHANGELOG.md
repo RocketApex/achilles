@@ -2,7 +2,7 @@
 
 All notable changes to Achilles will be documented in this file.
 
-## Unreleased
+## 1.1.0
 
 ### Added
 
@@ -16,7 +16,7 @@ All notable changes to Achilles will be documented in this file.
 
 - `Application` no longer starts automatically from the constructor. Applications
   should register component classes, then call `achilles.start()`. See
-  [docs/upgrading-to-unreleased.md](docs/upgrading-to-unreleased.md).
+  [docs/upgrading-to-1.1.0.md](docs/upgrading-to-1.1.0.md).
 - Elements with `data-component-class` must now have a non-empty `id`; invalid
   component roots are skipped with a console error.
 - Component teardown now runs from child components to parent components.
