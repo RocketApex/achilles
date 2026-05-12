@@ -122,6 +122,30 @@ test("ComponentsRegistry runs setup and teardown once for a component tree", asy
   ]);
 });
 
+test("ComponentsRegistry skips registration when parent component is missing", async () => {
+  const element = new TestElement({ id: "counter" });
+  installDom([element]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  const registry = new ComponentsRegistry();
+  const errors = [];
+
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args);
+
+  try {
+    registry.registerComponentByObj(new ComponentBase("counter", "missing-parent"));
+  } finally {
+    console.error = originalError;
+  }
+
+  assert.equal(registry.getRegisteredComponent("counter"), undefined);
+  assert.equal(element.dataset.componentRegistered, undefined);
+  assert.match(String(errors[0][0]), /Parent component not found/);
+});
+
 test("ComponentsRegistry tears down and deregisters components whose element disappeared", async () => {
   const element = new TestElement({ id: "counter" });
   const document = installDom([element]);

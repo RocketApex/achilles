@@ -25,6 +25,14 @@ class ComponentsRegistry {
             // Component is already registered. So have to call deregister and teardown
             this.teardownAndDeregister(id);
         }
+        let parentComponent = null;
+        if(parentComponentId != null) {
+            parentComponent = this.getRegisteredComponent(parentComponentId);
+            if(!parentComponent) {
+                console.error(`Parent component not found while registering component. id: ${id} | parentComponentId: ${parentComponentId}. Skipping registering component`);
+                return;
+            }
+        }
 
         this._registeredComponents[id] = {
             id: id,
@@ -34,7 +42,6 @@ class ComponentsRegistry {
             subComponents: []
         };
         if(parentComponentId != null) {
-            let parentComponent = this.getRegisteredComponent(parentComponentId);
             parentComponent.subComponents.push(id);
         }
         this.elementForId(id)?.setAttribute('data-component-registered', 'true');
