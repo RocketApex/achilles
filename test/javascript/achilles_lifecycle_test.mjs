@@ -117,8 +117,8 @@ test("ComponentsRegistry runs setup and teardown once for a component tree", asy
   assert.deepEqual(calls, [
     "page:setup",
     "counter:setup:one",
-    "page:teardown",
     "counter:teardown:one",
+    "page:teardown",
   ]);
 });
 

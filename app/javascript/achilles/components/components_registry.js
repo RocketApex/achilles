@@ -89,7 +89,12 @@ class ComponentsRegistry {
         if(!component || !component.obj)
             return;
 
-        // Call the objs default teardown if not already executed, otherwise skip to its children
+        // Call teardown for all sub view_components before their parent
+        component.subComponents.forEach((subComponentId) => {
+            this.callTeardownForComponent(subComponentId);
+        });
+
+        // Call the objs default teardown if not already executed
         if(component.obj.teardown && component.obj.teardownExecuted === false) {
             try{
                 component.obj.teardown(...component.defaultParams);
@@ -98,11 +103,6 @@ class ComponentsRegistry {
                 console.error(e);
             }
         }
-
-        // Call teardown for all sub view_components
-        component.subComponents.forEach((subComponentId) => {
-            this.callTeardownForComponent(subComponentId);
-        });
     }
 
     teardownAndDeregister(id) {

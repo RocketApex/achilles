@@ -80,6 +80,18 @@ Search for component roots without ids:
 rg "data-component-class"
 ```
 
+## Teardown Order
+
+Component teardown now runs from children to parents.
+
+Before this change, a parent component's `teardown()` could run before its child
+components. Now child components clean up first, and the parent cleans up after
+its subtree.
+
+Review parent components whose `teardown()` removes DOM nodes, shared event
+targets, third-party widgets, or state that child components also use during
+cleanup.
+
 ## Manual Test Checklist
 
 After updating an application:

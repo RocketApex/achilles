@@ -15,6 +15,7 @@ All notable changes to Achilles will be documented in this file.
   [docs/upgrading-to-unreleased.md](docs/upgrading-to-unreleased.md).
 - Elements with `data-component-class` must now have a non-empty `id`; invalid
   component roots are skipped with a console error.
+- Component teardown now runs from child components to parent components.
 - Turbo lifecycle hooks are now attached by `start()` and removed by `stop()`.
 
 ## 1.0.0
