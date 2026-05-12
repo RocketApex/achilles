@@ -255,8 +255,9 @@ Or wrap explicitly if the application still uses jQuery:
 $(this.rootElement()).addClass("is-open");
 ```
 
-Applications upgrading from `0.1.3` should read the
-[v1 migration guide](docs/migrating-from-0.1.3-to-v1.md).
+Applications upgrading Achilles should start with the
+[upgrade guide](docs/upgrading.md). Applications upgrading from `0.1.3` should
+also read the [v1 migration guide](docs/migrating-from-0.1.3-to-v1.md).
 
 ## Contributing
 

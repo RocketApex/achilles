@@ -82,6 +82,7 @@ If Chrome is not available, the system test base skips browser tests cleanly.
 - Keep changes scoped.
 - Add or update tests for behavior changes.
 - Update the README or docs for public API changes.
+- Add or update an upgrade guide for changes existing applications must make.
 - Mention breaking changes clearly in the pull request.
 - Do not introduce a new runtime dependency without explaining why it belongs in
   a small lifecycle gem.
