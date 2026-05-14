@@ -58,4 +58,54 @@ class DemoCounterTest < ApplicationSystemTestCase
     click_button "Count: 0"
     assert_button "Count: 1"
   end
+
+  test "browser back restores the previous page with working components" do
+    visit "/"
+
+    boot_count = page.evaluate_script("window.achillesBootCount")
+
+    click_link "Open nested demo"
+
+    assert_current_path "/nested"
+    assert_equal boot_count, page.evaluate_script("window.achillesBootCount")
+    assert_selector "#nested-panel[data-panel-ready='true']"
+
+    page.go_back
+
+    assert_current_path "/"
+    assert_equal boot_count, page.evaluate_script("window.achillesBootCount")
+    assert_button "Count: 0"
+
+    click_button "Count: 0"
+    assert_button "Count: 1"
+  end
+
+  test "browser back and forward restore pages with working components" do
+    visit "/"
+
+    boot_count = page.evaluate_script("window.achillesBootCount")
+
+    click_link "Open nested demo"
+    assert_current_path "/nested"
+    assert_equal boot_count, page.evaluate_script("window.achillesBootCount")
+
+    page.go_back
+
+    assert_current_path "/"
+    assert_equal boot_count, page.evaluate_script("window.achillesBootCount")
+    assert_button "Count: 0"
+    click_button "Count: 0"
+    assert_button "Count: 1"
+
+    page.go_forward
+
+    assert_current_path "/nested"
+    assert_equal boot_count, page.evaluate_script("window.achillesBootCount")
+    assert_selector "#nested-panel[data-panel-ready='true']"
+    assert_selector "#nested-button[data-nested-button-ready='true']"
+
+    assert_button "Nested count: 0"
+    click_button "Nested count: 0"
+    assert_button "Nested count: 1"
+  end
 end
