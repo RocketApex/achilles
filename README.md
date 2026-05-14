@@ -8,6 +8,9 @@ Achilles scans the page for elements with `data-component-class`, instantiates
 the matching JavaScript class, and calls `setup` and `teardown` as Turbo renders
 new pages or new component markup is inserted.
 
+Current applications should use Achilles `1.1.0`. If you are upgrading an
+existing app, start with the [1.1.0 upgrade guide](docs/upgrading-to-1.1.0.md).
+
 ## Why Achilles?
 
 Rails and Turbo make server-rendered interfaces productive, but many apps still
@@ -79,6 +82,9 @@ achilles.componentsClassMapper.addComponentClass("CounterComponent", CounterComp
 achilles.start();
 ```
 
+Call `start()` after registering component classes. Achilles parses the current
+page and attaches Turbo lifecycle hooks when the application starts.
+
 Create components by extending `ComponentBase`:
 
 ```js
@@ -108,9 +114,10 @@ Mark the component root in your view:
 <button id="counter" data-component-class="CounterComponent">0</button>
 ```
 
-Every component root must have a unique `id`. Achilles uses that id to register
-the component, find its root element, and avoid running setup twice for the same
-DOM node.
+Every component root must have a non-empty unique `id`. Achilles uses that id to
+register the component, find its root element, and avoid running setup twice for
+the same DOM node. Components without ids are skipped and reported in the browser
+console.
 
 ## Dynamic Components
 
@@ -148,6 +155,26 @@ Register the component class once:
 achilles.componentsClassMapper.addComponentClass("NotificationComponent", NotificationComponent);
 ```
 
+## Nested Components
+
+Achilles keeps a component tree rooted at a single synthetic `Page` component.
+A component's parent is its nearest ancestor element with `data-component-class`.
+If there is no component ancestor, its parent is `Page`.
+
+```erb
+<div id="dashboard" data-component-class="DashboardComponent">
+  <div id="filters" data-component-class="FiltersComponent"></div>
+</div>
+```
+
+This creates the following component tree:
+
+```text
+Page
+dashboard
+filters
+```
+
 ## Example App
 
 The dummy Rails app includes a working counter component. See
@@ -158,8 +185,17 @@ The dummy Rails app includes a working counter component. See
 - `setup()` runs after `turbo:load` and after new matching DOM nodes are inserted.
 - `teardown()` runs before Turbo renders a new page.
 - `setup()` and `teardown()` are called once per registered component instance.
+- Parent components are set up before their children.
+- Child components are torn down before their parents.
 - Components that attach listeners, timers, observers, subscriptions, or widgets
   should clean them up in `teardown()`.
+- Lifecycle errors are logged and swallowed by default so one broken component
+  does not stop the page. Enable strict mode in tests or development when errors
+  should be re-raised:
+
+```js
+achilles.strictLifecycleErrors = true;
+```
 
 ## API Reference
 
@@ -178,6 +214,7 @@ Useful properties:
 
 - `componentsClassMapper`: register component classes by name.
 - `componentRegistry`: inspect or manage registered component instances.
+- `strictLifecycleErrors`: re-raise lifecycle errors after logging them.
 - `timezone`: access the configured app timezone.
 
 Call `start()` after registering component classes. Call `stop()` when an
@@ -219,7 +256,9 @@ Useful methods:
 ```
 
 The `data-component-class` value must match a class registered with
-`componentsClassMapper`.
+`componentsClassMapper`. The element must also have a non-empty unique `id`.
+Nested components are parented by DOM ancestry, with top-level components
+parented by the synthetic `Page` component.
 
 ## Timezone
 
@@ -231,6 +270,13 @@ value through `achilles.timezone.timezoneString`.
 ```
 
 If no timezone is present, Achilles falls back to `Etc/UTC`.
+
+## Upgrading
+
+Applications upgrading to `1.1.0` should read the
+[1.1.0 upgrade guide](docs/upgrading-to-1.1.0.md). The complete upgrade index
+lives in [docs/upgrading.md](docs/upgrading.md), and the GitHub release draft is
+available at [docs/releases/v1.1.0.md](docs/releases/v1.1.0.md).
 
 ## Upgrading From 0.1.3
 
@@ -255,9 +301,8 @@ Or wrap explicitly if the application still uses jQuery:
 $(this.rootElement()).addClass("is-open");
 ```
 
-Applications upgrading Achilles should start with the
-[upgrade guide](docs/upgrading.md). Applications upgrading from `0.1.3` should
-also read the [v1 migration guide](docs/migrating-from-0.1.3-to-v1.md).
+Applications upgrading from `0.1.3` should also read the
+[v1 migration guide](docs/migrating-from-0.1.3-to-v1.md).
 
 ## Contributing
 

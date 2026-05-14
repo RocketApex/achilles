@@ -10,6 +10,10 @@ setup, component markup, lifecycle behavior, or public APIs.
 - [Upgrading to 1.1.0](upgrading-to-1.1.0.md)
 - [Migrating from 0.1.3 to v1](migrating-from-0.1.3-to-v1.md)
 
+## Release Notes
+
+- [Achilles 1.1.0](releases/v1.1.0.md)
+
 ## Upgrade Policy
 
 Before upgrading an existing application:

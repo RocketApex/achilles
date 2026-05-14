@@ -1,18 +1,29 @@
 # Release Checklist
 
-Use this checklist for `1.0.0.rc1` and future releases.
+Use this checklist for every Achilles release. Replace `VERSION` with the
+version being prepared, for example `1.1.0`.
+
+## Before Finalizing The Version
+
+- Confirm the release type: patch, minor, major, or prerelease.
+- Confirm `lib/achilles/version.rb` has the intended version.
+- Confirm `CHANGELOG.md` has an entry for the intended version.
+- Confirm application-facing changes have an upgrade note in `docs/upgrading.md`.
+- Confirm release notes exist in `docs/releases/` when the release needs a
+  GitHub release body.
+- Confirm package file expectations are covered by `test/gemspec_files_test.rb`
+  when adding source or documentation files.
 
 ## Before Building
 
-- Confirm `lib/achilles/version.rb` has the intended version.
-- Confirm `CHANGELOG.md` has an entry for the intended version.
 - Confirm CI is green on GitHub.
 - Run the local verification commands:
 
 ```bash
 bin/rails test
+node --test test/javascript/*_test.mjs
+for file in $(rg --files app/javascript/achilles test/dummy/app/javascript test/javascript | rg "\.(js|mjs)$"); do node --input-type=module --check < "$file" || exit 1; done
 bin/rails test:system
-for file in $(find app/javascript/achilles test/dummy/app/javascript -name '*.js' -print); do node --input-type=module --check < "$file" || exit 1; done
 RAILS_ENV=test bin/rails app:assets:precompile
 ```
 
@@ -25,13 +36,13 @@ gem build achilles.gemspec
 Confirm the generated gem name matches the intended version:
 
 ```bash
-ls achilles-*.gem
+ls achilles-VERSION.gem
 ```
 
 ## Test In A Real Application
 
-In one application that currently uses Achilles `0.1.3`, point the Gemfile to
-the local checkout or install the built prerelease gem.
+Before a broad rollout, test the built gem in at least one real Rails + Turbo
+application that already uses Achilles.
 
 Check:
 
@@ -45,30 +56,37 @@ Check:
 - components that attach window, document, timer, observer, or third-party
   widget state
 
-For v1, `rootElement()` returns a DOM element. If a component expects a jQuery
-object, update it to use DOM APIs or wrap explicitly with
-`$(this.rootElement())`.
+For releases with breaking or compatibility-sensitive behavior, test one app
+first, then roll out to the rest of the maintained apps gradually.
 
 ## Publish A Prerelease
 
-Only publish `1.0.0.rc1` after local checks and GitHub CI pass.
+Publish a prerelease only when the release needs real-app validation before a
+final tag.
 
 ```bash
-gem push achilles-1.0.0.rc1.gem
-git tag v1.0.0.rc1
-git push origin v1.0.0.rc1
+git tag vVERSION
+git push origin vVERSION
+gem push achilles-VERSION.gem
 ```
 
-## Publish Final v1.0.0
+Mark the GitHub release as a prerelease and include the matching release notes.
 
-Publish final `1.0.0` only after at least one real application has successfully
-tested the release candidate.
+## Publish A Final Release
 
-Before final release:
+Publish a final release after local checks, GitHub CI, packaging verification,
+and real-app testing are complete.
 
-- update `lib/achilles/version.rb` to `1.0.0`
-- update `CHANGELOG.md` from `1.0.0.rc1` to `1.0.0`
-- run all local checks
-- confirm GitHub CI is green
-- build and push `achilles-1.0.0.gem`
-- tag `v1.0.0`
+```bash
+git tag vVERSION
+git push origin vVERSION
+gem push achilles-VERSION.gem
+```
+
+After pushing:
+
+- Create or update the GitHub release for `vVERSION`.
+- Paste the release note from `docs/releases/vVERSION.md` when one exists, for
+  example `docs/releases/v1.1.0.md`.
+- Link the release back to the upgrade guide for application-facing changes.
+- Confirm the pushed gem is visible on RubyGems.
