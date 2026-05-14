@@ -53,6 +53,10 @@ class ComponentsRegistry {
         if(!component)
             return;
 
+        [...component.subComponents].forEach((subComponentId) => {
+            this.deregisterComponent(subComponentId);
+        });
+
         let parentComponent = this.getRegisteredComponent(component.parentComponentId);
 
         if(parentComponent != null){

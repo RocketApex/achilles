@@ -110,3 +110,40 @@ test("ComponentParser assigns nearest component ancestor as parent", async () =>
   assert.deepEqual(registry.getRegisteredComponent("Page").subComponents, ["dashboard"]);
   assert.deepEqual(registry.getRegisteredComponent("dashboard").subComponents, ["filters"]);
 });
+
+test("ComponentParser registers elements with stale registered DOM flags", async () => {
+  const element = new TestElement({
+    id: "counter",
+    dataset: {
+      componentClass: "CounterComponent",
+      componentRegistered: "true",
+    },
+  });
+  installDom([element]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsClassMapper } = await importAchilles("components/components_class_mapper.js");
+  const { ComponentParser } = await importAchilles("components/component_parser.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  let constructorCallCount = 0;
+
+  class CounterComponent extends ComponentBase {
+    constructor(...args) {
+      constructorCallCount += 1;
+      super(...args);
+    }
+  }
+
+  const registry = new ComponentsRegistry();
+  registry.registerComponent("Page", { id: "Page" }, [], null);
+
+  const mapper = new ComponentsClassMapper();
+  mapper.addComponentClass("CounterComponent", CounterComponent);
+
+  new ComponentParser(registry, mapper).parse();
+
+  assert.equal(constructorCallCount, 1);
+  assert.ok(registry.getRegisteredComponent("counter"));
+  assert.equal(element.dataset.componentRegistered, "true");
+});

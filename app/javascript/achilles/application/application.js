@@ -117,8 +117,8 @@ class Application {
   }
 
   deregisterAllComponentsExceptPage() {
-    let pageComponent = this.componentRegistry.getRegisteredComponent(AppConstants.PageComponentId)
-    pageComponent.subComponents.forEach((subComponentId) => {
+    let pageComponent = this.componentRegistry.getRegisteredComponent(AppConstants.PageComponentId);
+    [...pageComponent.subComponents].forEach((subComponentId) => {
       this.componentRegistry.deregisterComponent(subComponentId);
     })
   }

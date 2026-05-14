@@ -22,7 +22,7 @@ class ComponentParser {
                 console.error(elem);
                 return;
             }
-            if(elem.dataset.componentRegistered === 'true') {
+            if(elem.dataset.componentRegistered === 'true' && this._componentRegistry.getRegisteredComponent(elem.id)) {
                 return;
             }
             try {
