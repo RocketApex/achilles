@@ -2,6 +2,19 @@
 
 All notable changes to Achilles will be documented in this file.
 
+## 1.1.1
+
+### Fixed
+
+- Fixed Turbo browser history restoration so components restored from cached DOM
+  are registered and set up again when their registry entries were already
+  removed.
+- Fixed component subtree deregistration so child components are removed with
+  their parent and cannot block later re-registration.
+- Added browser system coverage for back, forward, restored nested components,
+  restored form-field listeners, Turbo-replaced form restoration, and duplicate
+  listener prevention.
+
 ## 1.1.0
 
 ### Added

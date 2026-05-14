@@ -8,8 +8,9 @@ Achilles scans the page for elements with `data-component-class`, instantiates
 the matching JavaScript class, and calls `setup` and `teardown` as Turbo renders
 new pages or new component markup is inserted.
 
-Current applications should use Achilles `1.1.0`. If you are upgrading an
-existing app, start with the [1.1.0 upgrade guide](docs/upgrading-to-1.1.0.md).
+Current applications should use Achilles `1.1.1`. If you are upgrading an
+existing app, start with the [1.1.0 upgrade guide](docs/upgrading-to-1.1.0.md)
+and then read the [1.1.1 release note](docs/releases/v1.1.1.md).
 
 ## Why Achilles?
 
@@ -276,7 +277,7 @@ If no timezone is present, Achilles falls back to `Etc/UTC`.
 Applications upgrading to `1.1.0` should read the
 [1.1.0 upgrade guide](docs/upgrading-to-1.1.0.md). The complete upgrade index
 lives in [docs/upgrading.md](docs/upgrading.md), and the GitHub release draft is
-available at [docs/releases/v1.1.0.md](docs/releases/v1.1.0.md).
+available at [docs/releases/v1.1.1.md](docs/releases/v1.1.1.md).
 
 ## Upgrading From 0.1.3
 

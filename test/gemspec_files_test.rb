@@ -17,6 +17,7 @@ class GemspecFilesTest < ActiveSupport::TestCase
       "app/javascript/achilles/components/component_parser.js",
       "app/javascript/achilles/components/components_registry.js",
       "config/importmap.rb",
+      "docs/releases/v1.1.1.md",
       "docs/releases/v1.1.0.md",
       "docs/upgrading.md",
       "docs/upgrading-to-1.1.0.md"
