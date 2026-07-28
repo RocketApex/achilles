@@ -34,6 +34,53 @@ class DemoCounterTest < ApplicationSystemTestCase
     assert_button "Nested count: 1"
   end
 
+  test "turbo frame replacement cleans outgoing component tree before rendering" do
+    visit "/frame_lifecycle"
+
+    assert_selector "#lifecycle-frame[data-frame-ready='true']"
+    assert_selector "#outgoing-panel[data-panel-ready='true']"
+    assert_selector "#outgoing-child[data-nested-button-ready='true']"
+
+    page.execute_script("window.achillesTeardownLog = []")
+    click_link "Replace lifecycle frame"
+
+    assert_selector "#lifecycle-frame[data-frame-ready='true']"
+    assert_selector "#incoming-panel[data-panel-ready='true']"
+    assert_selector "#incoming-child[data-nested-button-ready='true']"
+
+    teardown_log = page.evaluate_script("window.achillesTeardownLog")
+    assert_equal(
+      ["outgoing-child", "outgoing-panel", "lifecycle-frame"],
+      teardown_log.map { |entry| entry["id"] }
+    )
+    assert teardown_log.all? { |entry| entry["connected"] }
+
+    assert_nil page.evaluate_script(
+      "window.achilles.componentRegistry.getRegisteredComponent('outgoing-panel')"
+    )
+    assert_nil page.evaluate_script(
+      "window.achilles.componentRegistry.getRegisteredComponent('outgoing-child')"
+    )
+    assert page.evaluate_script(
+      "Boolean(window.achilles.componentRegistry.getRegisteredComponent('lifecycle-frame'))"
+    )
+    assert page.evaluate_script(
+      "Boolean(window.achilles.componentRegistry.getRegisteredComponent('incoming-panel'))"
+    )
+    assert page.evaluate_script(
+      "Boolean(window.achilles.componentRegistry.getRegisteredComponent('incoming-child'))"
+    )
+
+    assert_button "Incoming count: 0"
+    click_button "Incoming count: 0"
+    assert_button "Incoming count: 1"
+
+    browser_messages = page.driver.browser.logs.get(:browser).map(&:message)
+    assert_not browser_messages.any? { |message|
+      message.include?("Cannot find element while setup")
+    }
+  end
+
   test "turbo navigation keeps the page alive and nested components still work" do
     visit "/"
 

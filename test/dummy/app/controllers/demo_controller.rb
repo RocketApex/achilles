@@ -5,6 +5,12 @@ class DemoController < ApplicationController
   def nested
   end
 
+  def frame_lifecycle
+  end
+
+  def frame_lifecycle_replacement
+  end
+
   def nested_form
     @submitted_label = params[:label].presence || "blank"
 

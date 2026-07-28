@@ -130,6 +130,39 @@ class ComponentsRegistry {
         this.deregisterComponent(id);
     }
 
+    teardownAndDeregisterWithin(rootElement) {
+        if(!rootElement || typeof rootElement.contains !== 'function')
+            return;
+
+        Object.values(this._registeredComponents)
+            .filter((component) => {
+                if(component.id === AppConstants.PageComponentId)
+                    return false;
+
+                let element = this.elementForId(component.id);
+                return element && rootElement.contains(element);
+            })
+            .sort((firstComponent, secondComponent) => {
+                return this.elementDepth(secondComponent.id) - this.elementDepth(firstComponent.id);
+            })
+            .forEach((component) => {
+                if(this.getRegisteredComponent(component.id))
+                    this.teardownAndDeregister(component.id);
+            });
+    }
+
+    elementDepth(id) {
+        let depth = 0;
+        let element = this.elementForId(id);
+
+        while(element?.parentElement) {
+            depth += 1;
+            element = element.parentElement;
+        }
+
+        return depth;
+    }
+
     elementNotFound(id) {
         console.error('Cannot find element while setup, so teardown & deregister. id: ' + id);
         this.teardownAndDeregister(id);

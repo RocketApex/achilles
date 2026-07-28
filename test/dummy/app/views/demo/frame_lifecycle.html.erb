@@ -1,0 +1,13 @@
+<main class="demo-page">
+  <turbo-frame id="lifecycle-frame" data-component-class="DemoFrameComponent">
+    <section id="outgoing-panel" class="demo-panel" data-component-class="DemoPanelComponent">
+      <h1>Turbo Frame lifecycle</h1>
+
+      <button id="outgoing-child" class="demo-counter" data-component-class="DemoNestedButtonComponent" type="button">
+        Outgoing count: <span data-nested-count>0</span>
+      </button>
+
+      <%= link_to "Replace lifecycle frame", frame_lifecycle_replacement_path %>
+    </section>
+  </turbo-frame>
+</main>

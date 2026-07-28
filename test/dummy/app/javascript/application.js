@@ -2,6 +2,7 @@ import "@hotwired/turbo-rails";
 import { Application } from "achilles/application/application";
 import {
   DemoCounterComponent,
+  DemoFrameComponent,
   DemoFormComponent,
   DemoFormFieldComponent,
   DemoNestedButtonComponent,
@@ -14,6 +15,7 @@ window.achillesBootCount = bootCount;
 
 const achilles = new Application();
 achilles.componentsClassMapper.addComponentClass("DemoCounterComponent", DemoCounterComponent);
+achilles.componentsClassMapper.addComponentClass("DemoFrameComponent", DemoFrameComponent);
 achilles.componentsClassMapper.addComponentClass("DemoPanelComponent", DemoPanelComponent);
 achilles.componentsClassMapper.addComponentClass("DemoNestedButtonComponent", DemoNestedButtonComponent);
 achilles.componentsClassMapper.addComponentClass("DemoFormComponent", DemoFormComponent);
