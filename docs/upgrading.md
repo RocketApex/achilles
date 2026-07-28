@@ -12,6 +12,7 @@ setup, component markup, lifecycle behavior, or public APIs.
 
 ## Release Notes
 
+- [Achilles 1.1.2](releases/v1.1.2.md)
 - [Achilles 1.1.1](releases/v1.1.1.md)
 - [Achilles 1.1.0](releases/v1.1.0.md)
 

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    achilles (1.1.1)
+    achilles (1.1.2)
       importmap-rails (>= 2.0.0)
       rails (>= 7.0.2.3)
       turbo-rails (>= 2.0.11)
