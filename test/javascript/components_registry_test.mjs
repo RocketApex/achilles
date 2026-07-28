@@ -163,6 +163,57 @@ test("ComponentsRegistry deregisters a component subtree after teardown", async 
   assert.equal(registry.getRegisteredComponent("nested-button"), undefined);
 });
 
+test("ComponentsRegistry tears down registered component roots and descendants deepest-first", async () => {
+  const frame = new TestElement({ id: "account-frame" });
+  const panel = new TestElement({ id: "panel", parentElement: frame });
+  const nestedButton = new TestElement({ id: "nested-button", parentElement: panel });
+  installDom([frame, panel, nestedButton]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  const calls = [];
+
+  class TrackedComponent extends ComponentBase {
+    teardown() {
+      calls.push(this.id);
+    }
+  }
+
+  const registry = new ComponentsRegistry();
+  registry.registerComponent("Page", { id: "Page" }, [], null);
+  registry.registerComponentByObj(new TrackedComponent("account-frame", "Page"));
+  registry.registerComponentByObj(new TrackedComponent("panel", "account-frame"));
+  registry.registerComponentByObj(new TrackedComponent("nested-button", "panel"));
+  registry.callSetupForComponent("Page");
+  panel.removeAttribute("data-component-registered");
+
+  registry.teardownAndDeregisterWithin(frame);
+
+  assert.deepEqual(calls, ["nested-button", "panel", "account-frame"]);
+  assert.equal(registry.getRegisteredComponent("account-frame"), undefined);
+  assert.equal(registry.getRegisteredComponent("panel"), undefined);
+  assert.equal(registry.getRegisteredComponent("nested-button"), undefined);
+  assert.ok(registry.getRegisteredComponent("Page"));
+});
+
+test("ComponentsRegistry ignores components already deregistered during subtree cleanup", async () => {
+  const frame = new TestElement({ id: "account-frame" });
+  const panel = new TestElement({ id: "panel", parentElement: frame });
+  installDom([frame, panel]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+
+  const registry = new ComponentsRegistry();
+  registry.registerComponent("Page", { id: "Page" }, [], null);
+  registry.registerComponentByObj(new ComponentBase("panel", "Page"));
+  registry.deregisterComponent("panel");
+
+  assert.doesNotThrow(() => registry.teardownAndDeregisterWithin(frame));
+  assert.equal(registry.getRegisteredComponent("panel"), undefined);
+});
+
 test("ComponentsRegistry can remount a reused component after teardown", async () => {
   const element = new TestElement({ id: "counter" });
   installDom([element]);

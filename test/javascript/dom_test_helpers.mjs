@@ -30,6 +30,20 @@ export class TestElement {
     child.parentElement = this;
     return child;
   }
+
+  contains(element) {
+    let currentElement = element;
+
+    while (currentElement) {
+      if (currentElement === this) {
+        return true;
+      }
+
+      currentElement = currentElement.parentElement;
+    }
+
+    return false;
+  }
 }
 
 export class TestDocument {

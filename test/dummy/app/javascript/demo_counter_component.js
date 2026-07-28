@@ -1,5 +1,13 @@
 import { ComponentBase } from "achilles/components/component_base";
 
+function recordTeardown(component) {
+  window.achillesTeardownLog = window.achillesTeardownLog || [];
+  window.achillesTeardownLog.push({
+    id: component.id,
+    connected: component.rootElement()?.isConnected === true,
+  });
+}
+
 class DemoCounterComponent extends ComponentBase {
   setup() {
     this.count = 0;
@@ -16,12 +24,24 @@ class DemoCounterComponent extends ComponentBase {
   }
 }
 
+class DemoFrameComponent extends ComponentBase {
+  setup() {
+    this.rootElement().dataset.frameReady = "true";
+  }
+
+  teardown() {
+    recordTeardown(this);
+    this.rootElement()?.removeAttribute("data-frame-ready");
+  }
+}
+
 class DemoPanelComponent extends ComponentBase {
   setup() {
     this.rootElement().dataset.panelReady = "true";
   }
 
   teardown() {
+    recordTeardown(this);
     this.rootElement()?.removeAttribute("data-panel-ready");
   }
 }
@@ -34,6 +54,7 @@ class DemoNestedButtonComponent extends ComponentBase {
   }
 
   teardown() {
+    recordTeardown(this);
     this.rootElement()?.removeEventListener("click", this.increment);
   }
 
@@ -72,6 +93,7 @@ class DemoFormFieldComponent extends ComponentBase {
 
 export {
   DemoCounterComponent,
+  DemoFrameComponent,
   DemoFormComponent,
   DemoFormFieldComponent,
   DemoNestedButtonComponent,

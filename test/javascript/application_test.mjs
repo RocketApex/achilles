@@ -114,6 +114,7 @@ test("Application start and stop manage Turbo hooks and mutation observer", asyn
 
   assert.equal(document.listeners.get("turbo:load")?.length || 0, 0);
   assert.equal(document.listeners.get("turbo:before-render")?.length || 0, 0);
+  assert.equal(document.listeners.get("turbo:before-frame-render")?.length || 0, 0);
   assert.equal(mutationObservers.length, 1);
   assert.equal(mutationObservers[0].observing, false);
 
@@ -121,18 +122,145 @@ test("Application start and stop manage Turbo hooks and mutation observer", asyn
 
   assert.equal(document.listeners.get("turbo:load")?.length, 1);
   assert.equal(document.listeners.get("turbo:before-render")?.length, 1);
+  assert.equal(document.listeners.get("turbo:before-frame-render")?.length, 1);
   assert.equal(mutationObservers[0].observing, true);
 
   application.start();
 
   assert.equal(document.listeners.get("turbo:load")?.length, 1);
   assert.equal(document.listeners.get("turbo:before-render")?.length, 1);
+  assert.equal(document.listeners.get("turbo:before-frame-render")?.length, 1);
 
   application.stop();
 
   assert.equal(document.listeners.get("turbo:load")?.length || 0, 0);
   assert.equal(document.listeners.get("turbo:before-render")?.length || 0, 0);
+  assert.equal(document.listeners.get("turbo:before-frame-render")?.length || 0, 0);
   assert.equal(mutationObservers[0].observing, false);
+
+  application.start();
+
+  assert.equal(document.listeners.get("turbo:load")?.length, 1);
+  assert.equal(document.listeners.get("turbo:before-render")?.length, 1);
+  assert.equal(document.listeners.get("turbo:before-frame-render")?.length, 1);
+
+  application.stop();
+
+  assert.equal(document.listeners.get("turbo:load")?.length || 0, 0);
+  assert.equal(document.listeners.get("turbo:before-render")?.length || 0, 0);
+  assert.equal(document.listeners.get("turbo:before-frame-render")?.length || 0, 0);
+});
+
+test("Application cleans outgoing frame components before rendering and registers incoming components", async () => {
+  const frame = new TestElement({ id: "account-frame" });
+  const outgoing = new TestElement({
+    id: "outgoing",
+    dataset: { componentClass: "FrameComponent" },
+    parentElement: frame,
+  });
+  const document = installDom([frame, outgoing]);
+
+  const { Application } = await importAchilles("application/application.js");
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+
+  const calls = [];
+
+  class FrameComponent extends ComponentBase {
+    setup() {
+      calls.push(`${this.id}:setup`);
+    }
+
+    teardown() {
+      calls.push(`${this.id}:teardown`);
+    }
+  }
+
+  const application = new Application();
+  application.componentsClassMapper.addComponentClass("FrameComponent", FrameComponent);
+  application.start();
+
+  const incoming = new TestElement({
+    id: "incoming",
+    dataset: { componentClass: "FrameComponent" },
+    parentElement: frame,
+  });
+  const detail = {
+    render() {
+      assert.equal(application.componentRegistry.getRegisteredComponent("outgoing"), undefined);
+      calls.push("render");
+      document.elements = [frame, incoming];
+      mutationObservers[0].trigger([{ type: "childList" }]);
+    },
+  };
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args);
+
+  try {
+    document.dispatchEvent({
+      type: "turbo:before-frame-render",
+      target: frame,
+      detail,
+    });
+    detail.render();
+    await new Promise((resolve) => queueMicrotask(resolve));
+  } finally {
+    console.error = originalError;
+  }
+
+  assert.deepEqual(calls, [
+    "outgoing:setup",
+    "outgoing:teardown",
+    "render",
+    "incoming:setup",
+  ]);
+  assert.ok(application.componentRegistry.getRegisteredComponent("incoming"));
+  assert.equal(
+    errors.some(([message]) => String(message).includes("Cannot find element while setup")),
+    false
+  );
+});
+
+test("Application preserves MutationObserver cleanup for ordinary DOM removals", async () => {
+  const element = new TestElement({
+    id: "removable",
+    dataset: { componentClass: "RemovableComponent" },
+  });
+  const document = installDom([element]);
+
+  const { Application } = await importAchilles("application/application.js");
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+
+  let teardownCount = 0;
+
+  class RemovableComponent extends ComponentBase {
+    teardown() {
+      teardownCount += 1;
+    }
+  }
+
+  const application = new Application();
+  application.componentsClassMapper.addComponentClass("RemovableComponent", RemovableComponent);
+  application.start();
+
+  document.elements = [];
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args);
+
+  try {
+    mutationObservers[0].trigger([{ type: "childList" }]);
+    await new Promise((resolve) => queueMicrotask(resolve));
+  } finally {
+    console.error = originalError;
+  }
+
+  assert.equal(teardownCount, 1);
+  assert.equal(application.componentRegistry.getRegisteredComponent("removable"), undefined);
+  assert.equal(
+    errors.some(([message]) => String(message).includes("Cannot find element while setup")),
+    true
+  );
 });
 
 test("Application exposes strict lifecycle error mode", async () => {

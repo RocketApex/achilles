@@ -4,6 +4,7 @@ class Turbo {
   _teardownCallback;
   _setupHandler;
   _teardownHandler;
+  _frameRenderHandler;
   _started = false;
 
   constructor(application, setupCallback, teardownCallback) {
@@ -27,8 +28,24 @@ class Turbo {
       this._teardownCallback();
     };
 
+    this._frameRenderHandler = (event) => {
+      const frame = event.target;
+      const originalRender = event.detail?.render;
+
+      if (!frame || typeof originalRender !== "function") {
+        return;
+      }
+
+      const componentRegistry = this._application.componentRegistry;
+      event.detail.render = function(...args) {
+        componentRegistry.teardownAndDeregisterWithin(frame);
+        return Reflect.apply(originalRender, this, args);
+      };
+    };
+
     document.addEventListener("turbo:load", this._setupHandler);
     document.addEventListener("turbo:before-render", this._teardownHandler);
+    document.addEventListener("turbo:before-frame-render", this._frameRenderHandler);
     this._started = true;
   }
 
@@ -39,8 +56,10 @@ class Turbo {
 
     document.removeEventListener("turbo:load", this._setupHandler);
     document.removeEventListener("turbo:before-render", this._teardownHandler);
+    document.removeEventListener("turbo:before-frame-render", this._frameRenderHandler);
     this._setupHandler = null;
     this._teardownHandler = null;
+    this._frameRenderHandler = null;
     this._started = false;
   }
 }

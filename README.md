@@ -185,6 +185,9 @@ The dummy Rails app includes a working counter component. See
 
 - `setup()` runs after `turbo:load` and after new matching DOM nodes are inserted.
 - `teardown()` runs before Turbo renders a new page.
+- Before Turbo renders replacement content in a frame, Achilles tears down and
+  deregisters registered components in the outgoing frame from children to
+  parents.
 - `setup()` and `teardown()` are called once per registered component instance.
 - Parent components are set up before their children.
 - Child components are torn down before their parents.
