@@ -204,7 +204,8 @@ test("ComponentsRegistry tears down registered component roots and descendants d
   const frame = new TestElement({ id: "account-frame" });
   const panel = new TestElement({ id: "panel", parentElement: frame });
   const nestedButton = new TestElement({ id: "nested-button", parentElement: panel });
-  installDom([frame, panel, nestedButton]);
+  const outside = new TestElement({ id: "outside" });
+  const document = installDom([frame, panel, nestedButton, outside]);
 
   const { ComponentBase } = await importAchilles("components/component_base.js");
   const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
@@ -222,15 +223,22 @@ test("ComponentsRegistry tears down registered component roots and descendants d
   registry.registerComponentByObj(new TrackedComponent("account-frame", "Page"));
   registry.registerComponentByObj(new TrackedComponent("panel", "account-frame"));
   registry.registerComponentByObj(new TrackedComponent("nested-button", "panel"));
+  registry.registerComponentByObj(new TrackedComponent("outside", "Page"));
   registry.callSetupForComponent("Page");
   panel.removeAttribute("data-component-registered");
 
+  const findElement = document.getElementById.bind(document);
+  document.getElementById = (id) => {
+    assert.notEqual(id, "outside", "frame cleanup queried an unrelated component");
+    return findElement(id);
+  };
   registry.teardownAndDeregisterWithin(frame);
 
   assert.deepEqual(calls, ["nested-button", "panel", "account-frame"]);
   assert.equal(registry.getRegisteredComponent("account-frame"), undefined);
   assert.equal(registry.getRegisteredComponent("panel"), undefined);
   assert.equal(registry.getRegisteredComponent("nested-button"), undefined);
+  assert.equal(registry.getRegisteredComponent("outside").obj.mounted, true);
   assert.ok(registry.getRegisteredComponent("Page"));
 });
 

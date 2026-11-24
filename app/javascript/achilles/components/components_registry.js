@@ -142,20 +142,25 @@ class ComponentsRegistry {
         if(!rootElement || typeof rootElement.contains !== 'function')
             return;
 
+        const candidateIds = typeof rootElement.querySelectorAll === 'function'
+            ? new Set([rootElement.id, ...Array.from(rootElement.querySelectorAll('[id]'), (element) => element.id)])
+            : null;
+
         Object.values(this._registeredComponents)
             .filter((component) => {
                 if(component.id === AppConstants.PageComponentId)
+                    return false;
+                if(candidateIds && !candidateIds.has(component.id))
                     return false;
 
                 let element = this.elementForId(component.id);
                 return element && rootElement.contains(element);
             })
-            .sort((firstComponent, secondComponent) => {
-                return this.elementDepth(secondComponent.id) - this.elementDepth(firstComponent.id);
-            })
-            .forEach((component) => {
-                if(this.getRegisteredComponent(component.id))
-                    this.teardownAndDeregister(component.id);
+            .map(({ id }) => ({ id, depth: this.elementDepth(id) }))
+            .sort((first, second) => second.depth - first.depth)
+            .forEach(({ id }) => {
+                if(this.getRegisteredComponent(id))
+                    this.teardownAndDeregister(id);
             });
     }
 

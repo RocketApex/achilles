@@ -8,9 +8,8 @@ Achilles scans the page for elements with `data-component-class`, instantiates
 the matching JavaScript class, and calls `setup` and `teardown` as Turbo renders
 new pages or new component markup is inserted.
 
-Use Achilles `1.1.3` for current applications. If you are upgrading an existing
-app, see the [upgrade index](docs/upgrading.md) and the
-[1.1.3 release notes](docs/releases/v1.1.3.md).
+If you are upgrading an existing app, see the [upgrade index](docs/upgrading.md)
+for version-specific notes.
 
 ## Why Achilles?
 

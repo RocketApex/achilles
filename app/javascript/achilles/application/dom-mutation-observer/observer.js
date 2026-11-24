@@ -9,7 +9,12 @@ class Observer {
   }
 
   config() {
-    return { attributes: false, childList: true, subtree: true };
+    return {
+      attributes: true,
+      attributeFilter: ["id", "data-component-class"],
+      childList: true,
+      subtree: true,
+    };
   }
 
   start() {
@@ -22,8 +27,13 @@ class Observer {
     this._callbackScheduled = false;
   }
 
-  domChangedCallback(mutationsList, observer) {
-    if (this._callbackScheduled) {
+  domChangedCallback(mutationsList) {
+    if (this._callbackScheduled || !mutationsList.some((mutation) => {
+      // Replacing text cannot add or remove component roots.
+      return mutation.type !== "childList" ||
+        Array.from(mutation.addedNodes).some((node) => node.nodeType !== Node.TEXT_NODE) ||
+        Array.from(mutation.removedNodes).some((node) => node.nodeType !== Node.TEXT_NODE);
+    })) {
       return;
     }
 

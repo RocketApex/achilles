@@ -32,8 +32,9 @@ test("Application registers dynamically inserted components through the mutation
   });
   document.elements.push(element);
 
-  mutationObservers[0].trigger([{ type: "childList" }]);
-  mutationObservers[0].trigger([{ type: "childList" }]);
+  const records = [{ type: "childList", addedNodes: [element], removedNodes: [] }];
+  mutationObservers[0].trigger(records);
+  mutationObservers[0].trigger(records);
 
   assert.equal(setupCount, 0);
 
@@ -42,6 +43,39 @@ test("Application registers dynamically inserted components through the mutation
   assert.equal(setupCount, 1);
   assert.ok(application.componentRegistry.getRegisteredComponent("dynamic"));
   assert.equal(element.dataset.componentRegistered, "true");
+});
+
+test("Application skips text mutations and reconciles component attribute changes", async () => {
+  const element = new TestElement({ id: "attribute-root" });
+  installDom([element]);
+
+  const { Application } = await importAchilles("application/application.js");
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const application = new Application();
+  application.componentsClassMapper.addComponentClass("Probe", ComponentBase);
+  application.start();
+
+  let scans = 0;
+  const register = application.parseHtmlAndRegisterComponents.bind(application);
+  application.parseHtmlAndRegisterComponents = () => {
+    scans += 1;
+    register();
+  };
+  const observer = mutationObservers[0];
+  assert.deepEqual(observer.config.attributeFilter, ["id", "data-component-class"]);
+  observer.trigger([{
+    type: "childList",
+    addedNodes: [{ nodeType: Node.TEXT_NODE }],
+    removedNodes: [{ nodeType: Node.TEXT_NODE }],
+  }]);
+  await new Promise((resolve) => queueMicrotask(resolve));
+  assert.equal(scans, 0);
+
+  element.dataset.componentClass = "Probe";
+  observer.trigger([{ type: "attributes", attributeName: "data-component-class", target: element }]);
+  await new Promise((resolve) => queueMicrotask(resolve));
+  assert.equal(scans, 1);
+  assert.equal(application.componentRegistry.getRegisteredComponent(element.id).obj.mounted, true);
 });
 
 test("Application start runs initial setup after synchronous component registration", async () => {
@@ -189,7 +223,7 @@ test("Application cleans outgoing frame components before rendering and register
       assert.equal(application.componentRegistry.getRegisteredComponent("outgoing"), undefined);
       calls.push("render");
       document.elements = [frame, incoming];
-      mutationObservers[0].trigger([{ type: "childList" }]);
+      mutationObservers[0].trigger([{ type: "childList", addedNodes: [incoming], removedNodes: [outgoing] }]);
     },
   };
   const errors = [];
@@ -249,7 +283,7 @@ test("Application preserves MutationObserver cleanup for ordinary DOM removals",
   console.error = (...args) => errors.push(args);
 
   try {
-    mutationObservers[0].trigger([{ type: "childList" }]);
+    mutationObservers[0].trigger([{ type: "childList", addedNodes: [], removedNodes: [element] }]);
     await new Promise((resolve) => queueMicrotask(resolve));
   } finally {
     console.error = originalError;
