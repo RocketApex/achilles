@@ -4,6 +4,43 @@ import assert from "node:assert/strict";
 import { importAchilles } from "./module_loader.mjs";
 import { TestElement, installDom } from "./dom_test_helpers.mjs";
 
+test("ComponentsRegistry queries the escaped ID and rejects duplicates in plain markup", async () => {
+  const root = new TestElement({ id: "panel:counter", dataset: { componentClass: "Counter" } });
+  const duplicate = new TestElement({ id: root.id });
+  const document = installDom([root, duplicate]);
+  const selectors = [];
+  const querySelectorAll = document.querySelectorAll.bind(document);
+  document.querySelectorAll = (selector) => {
+    selectors.push(selector);
+    return querySelectorAll(selector);
+  };
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+  const registry = new ComponentsRegistry();
+  const component = new ComponentBase(root.id, null);
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args);
+  try {
+    registry.registerComponentByObj(component);
+  } finally {
+    console.error = originalError;
+  }
+
+  assert.equal(registry.getRegisteredComponent(root.id), undefined);
+  assert.match(String(errors[0][0]), /more than one elements with the same id/);
+  assert.deepEqual(selectors, ["#panel\\:counter"]);
+
+  document.elements = [root];
+  registry.registerComponentByObj(component);
+  assert.equal(registry.getRegisteredComponent(root.id).obj, component);
+
+  delete window.CSS.escape;
+  assert.deepEqual(registry.matchingElementsForId(root.id), [root]);
+  assert.equal(selectors.at(-1), "[id]");
+});
+
 test("ComponentsRegistry runs setup and teardown once for a component tree", async () => {
   const element = new TestElement({ id: "counter" });
   installDom([element]);
