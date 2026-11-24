@@ -1,6 +1,7 @@
 export class TestElement {
   constructor({ id, dataset = {}, parentElement = null } = {}) {
     this.id = id || "";
+    this.nodeType = 1;
     this.dataset = { ...dataset };
     this.attributes = {};
     this.parentElement = parentElement;
@@ -43,6 +44,10 @@ export class TestElement {
     }
 
     return false;
+  }
+
+  querySelectorAll(selector) {
+    return document.querySelectorAll(selector).filter((element) => element !== this && this.contains(element));
   }
 }
 
@@ -108,6 +113,7 @@ export function installDom(elements = []) {
   mutationObservers.length = 0;
 
   globalThis.document = document;
+  globalThis.Node = { TEXT_NODE: 3 };
   globalThis.window = {
     CSS: {
       escape: (value) => String(value).replaceAll(":", "\\:"),
@@ -120,8 +126,9 @@ export function installDom(elements = []) {
       mutationObservers.push(this);
     }
 
-    observe() {
+    observe(target, config) {
       this.observing = true;
+      this.config = config;
     }
 
     disconnect() {

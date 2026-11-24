@@ -2,10 +2,16 @@
 
 All notable changes to Achilles will be documented in this file.
 
-## Unreleased
+## 1.1.4
+
+### Performance
 
 - Speed up component registration by querying each component's ID directly in
   the browser while preserving duplicate-ID detection.
+- Skip component discovery for text-only DOM updates and reconcile changes
+  to component markers and IDs.
+- Limit Turbo Frame teardown lookups to registered components in the
+  outgoing frame.
 
 ## 1.1.3
 
