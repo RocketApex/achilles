@@ -2,11 +2,11 @@
 
 All notable changes to Achilles will be documented in this file.
 
-## Unreleased
+## 1.1.3
 
 ### Fixed
 
-- Component names and IDs are looked up only among registered entries.
+- Resolve component class names and IDs only among registered entries.
 
 ## 1.1.2
 
