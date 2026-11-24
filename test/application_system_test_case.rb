@@ -17,8 +17,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
     options.add_option("goog:loggingPrefs", { browser: "ALL" })
+  end
+
+  def after_teardown
+    # Each test gets a fresh browser profile. Capybara 3.40 resets Chrome with a
+    # wildcard origin that recent Chrome versions reject.
+    Capybara.current_session.driver.quit
+    super
   end
 
   setup do

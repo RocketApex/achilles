@@ -2,6 +2,12 @@
 
 All notable changes to Achilles will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Component names and IDs are looked up only among registered entries.
+
 ## 1.1.2
 
 ### Fixed
