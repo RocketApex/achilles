@@ -70,6 +70,10 @@ export class TestDocument {
       return this.elements.filter((element) => element.id);
     }
 
+    if (selector.startsWith("#")) {
+      return this.elements.filter((element) => selector === `#${window.CSS.escape(element.id)}`);
+    }
+
     return [];
   }
 

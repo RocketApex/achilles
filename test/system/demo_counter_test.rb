@@ -1,6 +1,31 @@
 require "application_system_test_case"
 
 class DemoCounterTest < ApplicationSystemTestCase
+  test "registry finds exact duplicate IDs with native browser selectors" do
+    visit "/"
+    assert_selector "#demo-counter[data-component-registered='true']"
+
+    matches = page.evaluate_script(<<~JS)
+      (() => {
+        const registry = window.achilles.componentRegistry;
+        const ids = ["0:panel #counter", "", String.fromCharCode(0), String.fromCharCode(0xD800)];
+        return ids.map((id) => {
+          const first = document.createElement("div");
+          const second = document.createElement("div");
+          first.id = second.id = id;
+          document.body.append(first, second);
+
+          const found = registry.matchingElementsForId(id);
+          first.remove();
+          second.remove();
+          return found.length === 2 && found[0] === first && found[1] === second;
+        });
+      })()
+    JS
+
+    assert_equal [true, true, true, true], matches
+  end
+
   test "demo counter increments through Achilles component lifecycle" do
     visit "/"
 

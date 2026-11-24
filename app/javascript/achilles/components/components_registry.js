@@ -6,7 +6,15 @@ class ComponentsRegistry {
     strictLifecycleErrors = false;
 
     matchingElementsForId(id) {
-        return [...document.querySelectorAll('[id]')].filter((elem) => elem.id === id);
+        if(typeof id !== 'string')
+            return [];
+
+        const css = globalThis.window?.CSS;
+        // CSS selectors cannot preserve null characters or unpaired surrogates.
+        const selector = id !== '' && !/[\0\uD800-\uDFFF]/u.test(id) && typeof css?.escape === 'function'
+            ? `#${css.escape(id)}`
+            : '[id]';
+        return [...document.querySelectorAll(selector)].filter((elem) => elem.id === id);
     }
 
     elementForId(id) {

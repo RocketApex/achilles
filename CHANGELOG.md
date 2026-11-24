@@ -2,6 +2,11 @@
 
 All notable changes to Achilles will be documented in this file.
 
+## Unreleased
+
+- Speed up component registration by querying each component's ID directly in
+  the browser while preserving duplicate-ID detection.
+
 ## 1.1.3
 
 ### Fixed
