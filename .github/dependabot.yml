@@ -1,7 +1,8 @@
 version: 2
 updates:
   - package-ecosystem: bundler
-    directory: "/"
+    # Resolve the test bundle with its own Ruby version.
+    directory: "/gemfiles"
     schedule:
       interval: weekly
     groups:

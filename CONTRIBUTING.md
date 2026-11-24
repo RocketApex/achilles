@@ -11,7 +11,7 @@ applications that already use the gem.
 Install dependencies:
 
 ```bash
-bundle install
+BUNDLE_GEMFILE=gemfiles/Gemfile bundle install
 ```
 
 Run the dummy Rails app:
