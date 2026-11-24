@@ -2,7 +2,7 @@ import { AppConstants } from "achilles/application/app_constants";
 
 // Contains all the registered components in a page at the current moment
 class ComponentsRegistry {
-    _registeredComponents = {};
+    _registeredComponents = Object.create(null);
     strictLifecycleErrors = false;
 
     matchingElementsForId(id) {

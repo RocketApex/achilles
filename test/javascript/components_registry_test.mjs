@@ -306,3 +306,25 @@ test("ComponentsRegistry re-raises lifecycle errors in strict mode", async () =>
     console.error = originalError;
   }
 });
+
+test("component names and IDs are scoped to their own registry", async () => {
+  const element = new TestElement({ id: "constructor" });
+  installDom([element]);
+
+  const { ComponentBase } = await importAchilles("components/component_base.js");
+  const { ComponentsRegistry } = await importAchilles("components/components_registry.js");
+  const { ComponentsClassMapper } = await importAchilles("components/components_class_mapper.js");
+
+  const mapper = new ComponentsClassMapper();
+  assert.equal(mapper.getComponentClass("constructor"), null);
+  mapper.addComponentClass("constructor", ComponentBase);
+  assert.equal(mapper.getComponentClass("constructor"), ComponentBase);
+
+  const registry = new ComponentsRegistry();
+  const component = new ComponentBase("constructor", null);
+  assert.equal(registry.getRegisteredComponent(component.id), undefined);
+  registry.registerComponentByObj(component);
+  assert.equal(registry.getRegisteredComponent(component.id).obj, component);
+  registry.teardownAndDeregister(component.id);
+  assert.equal(registry.getRegisteredComponent(component.id), undefined);
+});
